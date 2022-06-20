@@ -34,7 +34,7 @@ const ContestantDetails = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 mt-16 gap-y-16 gap-x-[80px]">
                         <div className="grid grid-cols-2 sm:grid-cols-1">
                             <div className="flex justify-center items-center sm:block">
-                                <span class="bg-[#9106cd] w-12 h-12 rounded-full flex justify-center items-center">
+                                <span className="bg-[#9106cd] w-12 h-12 rounded-full flex justify-center items-center">
                                     <span className="text-white text-2xl font-bold">1</span>
                                 </span>
                             </div>
@@ -46,7 +46,7 @@ const ContestantDetails = () => {
 
                         <div className="grid grid-cols-2 sm:grid-cols-1">
                             <div className="flex justify-center items-center sm:block">
-                                <span class="bg-[#9106cd] w-12 h-12 rounded-full flex justify-center items-center">
+                                <span className="bg-[#9106cd] w-12 h-12 rounded-full flex justify-center items-center">
                                     <span className="text-white text-2xl font-bold">2</span>
                                 </span>
                             </div>
@@ -58,7 +58,7 @@ const ContestantDetails = () => {
 
                         <div className="grid grid-cols-2 sm:grid-cols-1">
                             <div className="flex justify-center items-center sm:block">
-                                <span class="bg-[#9106cd] w-12 h-12 rounded-full flex justify-center items-center">
+                                <span className="bg-[#9106cd] w-12 h-12 rounded-full flex justify-center items-center">
                                     <span className="text-white text-2xl font-bold">3</span>
                                 </span>
                             </div>
