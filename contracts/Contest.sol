@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 contract Contest is Initializable{
     address public owner;
     address payable public winner;
+    string title;
 
     uint8 constant MAX_PARTICIPANTS = 4;
     uint public contestingFee;
@@ -37,9 +38,10 @@ contract Contest is Initializable{
     // Voting closed for a round
     event VotingClosed(uint8 round);
 
-    function initialize(address _owner, uint _contestingFee, uint _votingFee) external {
+    function initialize(address _owner, string memory _title, uint _contestingFee, uint _votingFee) external {
         //__ERC721_init(_name, _symbol);
         owner = _owner;
+        title = _title;
         contestingFee = _contestingFee;
         votingFee = _votingFee;
     }

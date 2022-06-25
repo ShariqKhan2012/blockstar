@@ -1,4 +1,4 @@
-import {useContext} from 'react';
+import { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import Web3Context from '../store/web3-context';
 
@@ -6,7 +6,7 @@ const NewContest = () => {
     const { register, handleSubmit, formState: { errors }, setError, reset } = useForm();
     const web3Ctxt = useContext(Web3Context);
     console.log('web3Ctxt =>', web3Ctxt)
-    const {web3, factory, accounts} = web3Ctxt;
+    const { web3, factory, accounts } = web3Ctxt;
     const registerOptions = {
         title: { required: "This field is required" },
         participatingFee: { required: "This field is required" },
@@ -15,10 +15,9 @@ const NewContest = () => {
 
     const onFormSubmit = async (data) => {
         console.log('onFormSubmit, web3Ctxt => ', web3Ctxt);
-        await factory.methods.createClone(2,1).send({
+        await factory.methods.createClone(data.title, data.participationFee, data.votingFee).send({
             from: accounts[0],
-            //value: minContribution
-          })
+        })
 
         /*const formData = new FormData();
         formData.append("workshop", data.workshop);
@@ -62,19 +61,19 @@ const NewContest = () => {
             <h1 className="text-teal text-3xl font-bold mb-4">Fill the contest details</h1>
             <form onSubmit={handleSubmit(onFormSubmit, onError)} className="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-16">
                 <div>
-                    <input name="title" {...register('title', registerOptions.title)} className="p-3 w-full border border-slate-300 rounded-md focus:outline-none" type="text" placeholder="Your full name" />
+                    <input name="title" {...register('title', registerOptions.title)} className="p-3 w-full border border-slate-300 rounded-md focus:outline-none" type="text" placeholder="Title of the contest " />
                     <small className="text-[#f00]">
                         {errors?.title && errors.title.message}
                     </small>
                 </div>
                 <div>
-                    <input name="participatingFee" {...register('participatingFee', registerOptions.age)} className="p-3 w-full  border border-slate-300 rounded-md focus:outline-none" type="number" min="1" placeholder="Participating Fee" />
+                    <input name="participatingFee" {...register('participatingFee', registerOptions.participatingFee)} className="p-3 w-full  border border-slate-300 rounded-md focus:outline-none" type="number" min="1" placeholder="Participating fee" />
                     <small className="text-[#f00]">
                         {errors?.participatingFee && errors.participatingFee.message}
                     </small>
                 </div>
                 <div>
-                    <input name="votingFee" {...register('votingFee', registerOptions.votingFee)} className="p-3 w-full  border border-slate-300 rounded-md focus:outline-none" type="number" min="1" placeholder="Participating Fee" />
+                    <input name="votingFee" {...register('votingFee', registerOptions.votingFee)} className="p-3 w-full  border border-slate-300 rounded-md focus:outline-none" type="number" min="1" placeholder="Participating fee" />
                     <small className="text-[#f00]">
                         {errors?.votingFee && errors.votingFee.message}
                     </small>

@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Navbar, Footer } from './components';
 import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, Participate, Profile, Dashboard, SUDashboard } from './views';
-import getWeb3 from "./getWeb3";
-import ContestCloneFactory from "../../build/contracts/ContestCloneFactory.json";
 //import { Web3ContextProvider } from './store/web3-context';
 //require ('dotenv').config({path: '../.env'});
 function App() {
