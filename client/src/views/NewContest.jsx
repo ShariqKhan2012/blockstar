@@ -1,8 +1,12 @@
+import {useContext} from 'react';
 import { useForm } from 'react-hook-form';
-import DefaultAvatar from '../assets/default-avatar.png'
+import Web3Context from '../store/web3-context';
 
-const Participate = () => {
+const NewContest = () => {
     const { register, handleSubmit, formState: { errors }, setError, reset } = useForm();
+    const web3Ctxt = useContext(Web3Context);
+    console.log('web3Ctxt =>', web3Ctxt)
+    const {web3, factory, accounts} = web3Ctxt;
     const registerOptions = {
         title: { required: "This field is required" },
         participatingFee: { required: "This field is required" },
@@ -10,7 +14,11 @@ const Participate = () => {
     };
 
     const onFormSubmit = async (data) => {
-        console.log('data => ', data);
+        console.log('onFormSubmit, web3Ctxt => ', web3Ctxt);
+        await factory.methods.createClone(2,1).send({
+            from: accounts[0],
+            //value: minContribution
+          })
 
         /*const formData = new FormData();
         formData.append("workshop", data.workshop);
@@ -80,4 +88,4 @@ const Participate = () => {
     )
 }
 
-export default Participate;
+export default NewContest;

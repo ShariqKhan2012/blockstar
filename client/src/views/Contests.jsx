@@ -1,6 +1,20 @@
+import { useContext, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import Web3Context from '../store/web3-context';
 
 const ContestCard = ({ name, avatarUrl, link }) => {
+    const web3Ctxt = useContext(Web3Context);
+    const {web3, factory, accounts} = web3Ctxt;
+
+    useEffect(() => {
+        fetchContests();
+    })
+
+    const fetchContests = async() => {
+        const res = await factory.methods.getContests().call();
+        console.log('contests =>', res);
+    }
+
     return (
         <div className="shadow-2xl shadow-[#aaa] bg-[#9106cd] rounded-xl border-solid border-1 border-transparent">
             <div className=" px-4 py-8">
