@@ -7,17 +7,35 @@ import { getRandomThumbnail } from '../utils/utils';
 
 const Contests = () => {
     const web3Ctxt = useContext(Web3Context);
-    const {web3, factory, accounts} = web3Ctxt;
+    const { web3, factory, accounts } = web3Ctxt;
     const [contests, setContests] = useState([]);
     useEffect(() => {
         fetchContests();
-    },[web3, factory, accounts]);
+    }, [web3, factory, accounts]);
 
-    const fetchContests = async() => {
+    const fetchContests = async () => {
         const res = await factory.methods.getContests().call();
         setContests(res);
         console.log('contests =>', res);
     }
+    const setupEventListener = () => {
+        factory.events.SupplyChainEvent().on("data", async function (e) {
+            console.log('Event Triggerred 1=> ', e);
+        });
+        factory.events.SupplyChainEvent({}, async (error, data) => {
+            console.log('Event Triggerred 2=> ', error, data);
+        });
+
+        factory.events.SupplyChainEvent({}, function (error, event) { console.log('Event Triggerred 3=> ', event); })
+            .on('data', function (event) {
+                console.log(event); // same results as the optional callback above
+            })
+            .on('changed', function (event) {
+                // remove event from local database
+            })
+            .on('error', console.error);
+    }
+
     return (
         <div className="max-w-7xl mx-auto p-4">
             <h1 className="text-teal text-3xl font-bold mb-4">Contests</h1>
