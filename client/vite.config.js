@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 ///require ('dotenv').config({path: '../.env'});
-import envCompatible from 'vite-plugin-env-compatible';
 
 // https://vitejs.dev/config/
 export default defineConfig({

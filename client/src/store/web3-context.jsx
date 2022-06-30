@@ -24,8 +24,6 @@ export const Web3ContextProvider = (props) => {
   const [metamaskInstalled, setMetamaskInstalled] = useState(false);
   const [walletConnected, setWalletConnected] = useState(false);
 
-
-
   useEffect(() => {
     console.log('Inside useEffect');
 
@@ -33,18 +31,24 @@ export const Web3ContextProvider = (props) => {
       initWeb3();
     }
 
-    if (factory === undefined) {
+    /*if (factory === undefined) {
       initFactory();
-    }
+    }*/
 
     if(!accounts.length) {
-      connectWallet();
+      //connectWallet();
     }
 
     return () => {
       cleanup();
     }
-  }, [web3, factory, accounts]);
+  }, [/*web3, factory*/ /*, accounts*/]);
+
+  useEffect(() => {
+    if(web3 != undefined) {
+      initFactory();
+    }
+  },[web3])
 
   const cleanup = () => {
     //Remove listeners
@@ -52,13 +56,16 @@ export const Web3ContextProvider = (props) => {
     //ethereum.removeListener('chainChanged', handleChainChanged);
   }
 
-  const initWeb3 = async () => {
+  const initWeb3 = () => {
     try {
+      console.log('Entering initWeb3');
       // Get network provider and web3 instance.
-      const web3Instance = await getWeb3();
+      const web3Instance = getWeb3();
       setWeb3(web3Instance);
       console.log('Inside initWeb3 web3Instance =>', web3Instance);
-      console.log('Inside initWeb3 web3  =>', web3);
+      //console.log('Inside initWeb3 web3  =>', web3);
+
+      
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -75,14 +82,23 @@ export const Web3ContextProvider = (props) => {
   };
 
   const initFactory = async () => {
+    console.log('Env =>', import.meta.env);
     // Get the contract instance.
     console.log('web3 inside initFactory =>', web3);
-    const networkId = await web3.eth.net.getId();
+    const chainId = await web3.eth.getChainId();
+    console.log('chainId =>', chainId);
+    //const networkId = await web3.eth.net.getId();
+    const networkId = '5777';
+    console.log('networkID =>', networkId);
     const deployedNetwork = ContestCloneFactory.networks[networkId];
     const instance = new web3.eth.Contract(
       ContestCloneFactory.abi,
       deployedNetwork && deployedNetwork.address,
     );
+    /*const instance = new web3.eth.Contract(
+      ContestCloneFactory.abi,
+      '0xbE0eA9D5E21F5a6CF1774D67872b6Ada1120e91B',
+    );*/
     setFactory(instance);
     console.log('Inside initFactory, instance =>', instance);
     console.log('Inside initFactory, factory =>', factory);

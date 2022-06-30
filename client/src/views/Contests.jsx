@@ -10,13 +10,17 @@ const Contests = () => {
     const { web3, factory, accounts } = web3Ctxt;
     const [contests, setContests] = useState([]);
     useEffect(() => {
-        fetchContests();
-    }, [web3, factory, accounts]);
+        console.log('Inside useEffect of Contests');
+        if(web3 && factory) {
+            fetchContests();
+        }
+    }, [web3Ctxt]);
 
     const fetchContests = async () => {
-        const res = await factory.methods.getContests().call();
+        console.log('Inside fetchContests, factory => ', factory)
+        const res = await factory.methods.getDummy().call();
+        console.log('res =>', res);         
         setContests(res);
-        console.log('contests =>', res);
     }
     const setupEventListener = () => {
         factory.events.SupplyChainEvent().on("data", async function (e) {

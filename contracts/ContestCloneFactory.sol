@@ -29,4 +29,8 @@ contract ContestCloneFactory {
     function getContests() public view returns ( ClonedContest[] memory){
         return contests;
     }
+
+    function getDummy() public pure returns (string memory) {
+        return "Helllloooooo!!";
+    }
 }
