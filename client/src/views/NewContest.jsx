@@ -14,10 +14,8 @@ const NewContest = () => {
     };
 
     const onFormSubmit = async (data) => {
-        console.log('onFormSubmit, web3Ctxt => ', web3Ctxt);
-        await factory.methods.createClone(data.title, data.participationFee, data.votingFee).send({
-            from: accounts[0],
-        })
+        console.log('onFormSubmit, web3Ctxt => ', web3Ctxt.accounts[0], web3Ctxt);
+        await web3Ctxt.factory.methods.createClone(data.title, data.participatingFee, data.votingFee).send({ from: web3Ctxt.accounts[0] })
 
         /*const formData = new FormData();
         formData.append("workshop", data.workshop);

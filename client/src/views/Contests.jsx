@@ -18,7 +18,7 @@ const Contests = () => {
 
     const fetchContests = async () => {
         console.log('Inside fetchContests, factory => ', factory)
-        const res = await factory.methods.getDummy().call();
+        const res = await factory.methods.getContests().call();
         console.log('res =>', res);         
         setContests(res);
     }

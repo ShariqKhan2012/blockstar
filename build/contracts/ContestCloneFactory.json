@@ -28,7 +28,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -82,7 +83,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [],
@@ -95,7 +97,8 @@
         }
       ],
       "stateMutability": "pure",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.10+commit.fc410830\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"contests\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_title\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_contestingFee\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_votingFee\",\"type\":\"uint256\"}],\"name\":\"createClone\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getContests\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"addr\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"}],\"internalType\":\"struct ContestCloneFactory.ClonedContest[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDummy\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/ContestCloneFactory.sol\":\"ContestCloneFactory\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/proxy/Clones.sol\":{\"keccak256\":\"0x1cc0efb01cbf008b768fd7b334786a6e358809198bb7e67f1c530af4957c6a21\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://af407aa35f7602a9047a27803bfd98c372479474f77f7aaf833166bdd952f2fd\",\"dweb:/ipfs/QmZgo1P3RM4Gn5CJKkNRn3tQDHotWPw9H7p7vC1hm4XkZv\"]},\"@openzeppelin/contracts/proxy/utils/Initializable.sol\":{\"keccak256\":\"0xb68c2016cd41840646addd6f79f17f80f42a6279acb0cd4d9d85cab6e8d9b777\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://fb7967120ec6c32374a68640c80fb5d70362e91945690997c6c11d1719957dc2\",\"dweb:/ipfs/QmSc81UBz225LVWx5c1V5cvioVrGdDFXV6jeDyB9wHWTUQ\"]},\"@openzeppelin/contracts/utils/Address.sol\":{\"keccak256\":\"0x2ccf9d2313a313d41a791505f2b5abfdc62191b5d4334f7f7a82691c088a1c87\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://b3a57d0854b2fdce6ebff933a48dca2445643d1eccfc27f00292e937f26c6a58\",\"dweb:/ipfs/QmW45rZooS9TqR4YXUbjRbtf2Bpb5ouSarBvfW1LdGprvV\"]},\"project:/contracts/Contest.sol\":{\"keccak256\":\"0xe52f79cc805b788aa5f6696ce92ad0898281450e0281a652b9db49222ac5e6e5\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://603ced86b9b97caad4ce2d0cf7b86d94085197dbd2a55ad19b088632ff16a981\",\"dweb:/ipfs/QmQXgTEGjcsUt3RA74tDZ1iJUZVDvhAYP6z7n2uLNfAmRc\"]},\"project:/contracts/ContestCloneFactory.sol\":{\"keccak256\":\"0x63d6f4f95e02cd94ebfcde5d68293bb4daa2ad557ddbea217c7c57386ea4857f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0f40bb5fc5a380d4ff4ac497755bafabcf8660890c0b5ede861df3193c6e6d2d\",\"dweb:/ipfs/QmSP4euC5NdhPC1MgxEz3kVS7ri3YqhbRuuxyHncK693Ld\"]}},\"version\":1}",
@@ -7355,12 +7358,13 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0xbE0eA9D5E21F5a6CF1774D67872b6Ada1120e91B",
-      "transactionHash": "0x86cae4d3669d6425fdfbeb85d0945a0fb7374065fc33d0da68b442602a2d6ac6"
+      "address": "0x019f3824f705Cd2ec3791b3081268c9103519bff",
+      "transactionHash": "0xf72dfabf9f1ff736d3189d7ef156b59f79f29dc531339fe216e1dc8df8864713"
     }
   },
   "schemaVersion": "3.4.7",
-  "updatedAt": "2022-06-29T18:17:33.092Z",
+  "updatedAt": "2022-06-30T16:28:05.077Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},

@@ -3,7 +3,7 @@ import getWeb3 from "../getWeb3";
 import ContestCloneFactory from "../../../build/contracts/ContestCloneFactory.json";
 
 const Web3Context = createContext({
-  web3: undefined,
+  /*web3: undefined,
   factory: undefined,
   accounts: [],
   setAccounts: {},
@@ -12,7 +12,7 @@ const Web3Context = createContext({
   metamaskInstalled: false,
   setMetamaskInstalled: {},
   walletConnected: false,
-  setWalletConnected: {}
+  setWalletConnected: {}*/
 });
 
 export const Web3ContextProvider = (props) => {

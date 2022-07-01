@@ -1,6 +1,7 @@
-import {NavLink} from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 //import Logo from '../logo.png'
 import Logo from '../assets/logo.svg'
+import ConnnectWalletButton from './ConnectWalletButton';
 
 const NavItem = ({ title, url, classProps }) => {
     return (
@@ -21,7 +22,10 @@ const Navbar = () => {
                 <NavItem title="Profile" url="/profile" classProps="" />
                 <NavItem title="Super-Admin Dashboard" url="/su-dashboard" classProps="" />
             </ul>
-            <NavItem title="Start A Contest" url="/contests/new" classProps="bgt-[#9106cd] bg-[#00c9b7] hover:bg-[#36b1a0] py-2 px-6  inline-block rounded-lg text-white text-center" />
+            <ul className="flex">
+                <NavItem title="Start A Contest" url="/contests/new" classProps="bgt-[#9106cd] bg-[#00c9b7] hover:bg-[#36b1a0] py-2 px-6  inline-block rounded-lg text-white text-center" />
+                <li className="p-2"><ConnnectWalletButton /></li>
+            </ul>
         </nav>
     )
 }

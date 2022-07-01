@@ -1,6 +1,6 @@
 import Web3 from "web3";
 
-const initWeb3 = () => {
+const getWeb3 = () => {
   return new Promise((resolve, reject) => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener("load", async () => {
@@ -38,7 +38,7 @@ const initWeb3 = () => {
   });
 }
 
-const getWeb3 = () => {
+const initWeb3 = () => {
   if (window.ethereum) {
     const web3 = new Web3(window.ethereum);
     try {
