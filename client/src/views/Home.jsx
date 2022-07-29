@@ -7,7 +7,7 @@ const ContestantDetails = () => {
     const id = params.id;
 
     return (
-        <>
+        <div className="bg-white">
             <section className="bg-[#fff] max-w-7xl mx-auto px-4 py-24">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-[80px]">
                     <div className="order-2 md:order-1 grid items-center">
@@ -17,8 +17,8 @@ const ContestantDetails = () => {
                                 Start a contest, and discover new talent. Or partipate in one of the many exciting contests
                                 and show the world how awesome you are. On a global platform!
                             </p>
-                            <div className="px-4 pt-8 flex justify-center">
-                                <NavLink to="/contests/new" className="bg-[#00c9b7] hover:bg-[#36b1a0] py-2 px-6  inline-block mx-auto my-4  rounded-lg text-white text-center">Start A Contest</NavLink>
+                            <div className="px-4 pt-4 flex justify-center">
+                                <NavLink to="/contests/new" className="bg-[#00c9b7] hover:bg-[#36b1a0] py-2 px-6  inline-block mx-auto mt-4  rounded-lg text-white text-center">Start A Contest</NavLink>
                             </div>
                         </div>
                     </div>
@@ -80,7 +80,7 @@ const ContestantDetails = () => {
                 </div>
             </section>
 
-        </>
+        </div>
     )
 }
 

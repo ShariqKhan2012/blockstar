@@ -136,18 +136,6 @@ export const Web3ContextProvider = (props) => {
   }
   //ethereum.on('chainChanged', handleChainChanged);
 
-  const handleWalletConnected = (chainId) => {
-    //May be test if the wallet is able to send RPC calls to chainID here?
-    //ethereum.isConnected():
-  }
-  //ethereum.on('connect', handleWalletConnected);
-
-  const handleWalletDisconnected = (ProviderRpcError) => {
-    //May be test if the wallet is able to send RPC calls to chainID here?
-    //ethereum.isConnected():
-  }
-  //ethereum.on('disconnect', handleWalletDisconnected);
-
 
   /*interface ProviderMessage {
     type: string;
