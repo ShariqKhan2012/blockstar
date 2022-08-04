@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
@@ -36,9 +38,22 @@ module.exports = {
     'peer-checked:bg-gray-300',
     'after:bg-white',
     'after:bg-gray-400',
+
+    'shadow-lg',
+    'shadow-gray-400/50',
+
+    'bg-[#26c6da]',
+    'bg-[#66bb6a]',
+    'bg-[#ef5350]',
+    'bg-[#ff9800]',
+
+    'border-gray-500'
   ],
   theme: {
     extend: {
+      /*fontFamily: {
+        sans: ['Montserrat', ...defaultTheme.fontFamily.sans]
+      }*/
       /*keyframes: {
         spinner: {
           '0%': {

@@ -1,5 +1,6 @@
 import Web3 from "web3";
-import { MAINNET, RINKEBY, GANACHE_UI, getAppChainId } from "./utils/utils";
+import { MAINNET, RINKEBY, GANACHE_UI } from "./utils/constants";
+import { getAppChainId } from "./utils/utils";
 
 const fetchWeb3 = () => {
   return new Promise((resolve, reject) => {
@@ -63,6 +64,7 @@ const getWeb3 = () => {
       // Request account access if needed
       //await window.ethereum.enable();
       // Accounts now exposed
+      //web3.eth.handleRevert = true;
       return web3;
     } catch (error) {
       reject(error);

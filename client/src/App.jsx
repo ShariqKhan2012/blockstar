@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Navbar, Footer } from './components';
 import Dialog from './components/Dialog';
-import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, Participate, Profile, Dashboard, SUDashboard } from './views';
+import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, NotFound  } from './views';
 import getWeb3 from "./getWeb3";
 import Web3Context from './store/web3-context';
 import ContestCloneFactory from "../../build/contracts/ContestCloneFactory.json";
 //require ('dotenv').config({path: '../.env'});
+import './App.css';
 
 function App() {
   const [web3, setWeb3] = useState(undefined);
@@ -276,20 +277,15 @@ function App() {
         //onCancel={() => alert(456)}
         //cancelLabel="No"
         />
-        <div className="bg-[#f5f8ff]">
           <Routes>
             <Route path="/" exact caseSensitive={false} element={<Home />} />
             <Route path="/contests/new" exact caseSensitive={false} element={<NewContest />} />
+            <Route path="/contests/:id/:cId" exact caseSensitive={false} element={<ContestantDetails />} />
             <Route path="/contests/:id" exact caseSensitive={false} element={<ContestDetails />} />
             <Route path="/contests" exact caseSensitive={false} element={<Contests />} />
-            <Route path="/contestants/:id" exact caseSensitive={false} element={<ContestantDetails />} />
             <Route path="/contestants" exact caseSensitive={false} element={<Contestants />} />
-            <Route path="/participate" exact caseSensitive={false} element={<Participate />} />
-            <Route path="/profile" exact caseSensitive={false} element={<Profile />} />
-            <Route path="/dashboard" exact caseSensitive={false} element={<Dashboard />} />
-            <Route path="/su-dashboard" exact caseSensitive={false} element={<SUDashboard />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
-        </div>
 
         <Footer />
       </div>

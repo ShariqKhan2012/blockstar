@@ -1,6 +1,5 @@
-export const MAINNET = '0x1';   //Decimal => 1
-export const RINKEBY = '0x4';   //Decimal => 1
-export const GANACHE_UI = '0x539'; //Decimal => 1337
+import {MAINNET, RINKEBY, GANACHE_UI, errorMessages} from './constants';
+
 
 export const getChainConfig = (chainId) => {
     console.log('getChainConfig chainId ', chainId)
@@ -8,7 +7,7 @@ export const getChainConfig = (chainId) => {
         return {
             chainId: GANACHE_UI,
             chainName: 'Ganache UI',
-            rpcUrls: ['http://127.0.0.1:7545'],
+            rpcUrls: ['ws://127.0.0.1:7545'],
             nativeCurrency: {
                 //name: 'Binance Coin',
                 symbol: 'ETH', // 2-6 characters long
@@ -91,7 +90,41 @@ export const getNetworkName = (id) => {
         case GANACHE_UI:
             return 'Ganache UI';
 
-        default: 
+        default:
             return 'Unknown';
     }
+}
+
+export const extractErrorCode = (str) => {
+    console.log('typeof', typeof (str), str)
+    /*const leftDelimiter = "___";
+    const rightDelimiter = "___";
+    const arr = str.match(new RegExp(leftDelimiter + "(.*)" + rightDelimiter));
+    console.log('arr', arr)
+
+    if(arr && arr.length && arr.length == 2) {
+        return arr[1];
+    }
+    else {
+        return "An error occured";
+    }*/
+
+    const delimiter = '___';
+    const firstOccurence = str.indexOf(delimiter);
+    if(firstOccurence == -1) {
+        return "An error occured";
+    }
+
+    const secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
+    if(secondOccurence == -1) {
+        return "An error occured";
+    }
+
+    //Okay so far
+    const errorCode = str.substring(firstOccurence + delimiter.length, secondOccurence);
+    return errorMessages[errorCode] ?? errorCode;
+}
+
+export const compareStr = (str1, str2) => {
+    return str1.toLowerCase() == str2.toLowerCase();
 }

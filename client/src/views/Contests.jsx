@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import Web3Context from '../store/web3-context';
 import ContestCard from '../components/ContestCard';
 import { getRandomThumbnail } from '../utils/utils';
+import ContainedLayout from '../layouts/Contained';
 
 
 const Contests = () => {
@@ -46,8 +47,10 @@ const Contests = () => {
 
 
 	return (
-		<div className="max-w-7xl mx-auto p-4">
-			<h1 className="text-teal text-3xl font-bold mb-4">Contests</h1>
+		<ContainedLayout>
+			<div className="grid mb-12">
+				<h1 className="text-[#333] text-4xl font-bold text-center">Contests</h1>
+			</div>
 			<div className="grid grid-cols-4 gap-y-16 gap-x-[80px]">
 				{
 					contests.map((c) => {
@@ -55,7 +58,7 @@ const Contests = () => {
 					})
 				}
 			</div>
-		</div>
+		</ContainedLayout>
 	)
 }
 

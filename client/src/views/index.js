@@ -4,7 +4,4 @@ export {default as NewContest} from './NewContest';
 export {default as ContestDetails} from './ContestDetails';
 export {default as Contestants} from './Contestants';
 export {default as ContestantDetails} from './ContestantDetails';
-export {default as Participate} from './Participate';
-export {default as Profile} from './Profile';
-export {default as Dashboard} from './Dashboard';
-export {default as SUDashboard} from './SUDashboard';
+export {default as NotFound} from './NotFound';
