@@ -6,6 +6,7 @@ contract Contest is Initializable {
     address public owner;
     address payable public winner;
     string public title;
+    string public description;
 
     uint8 public constant NUM_ALLOWED_PARTICIPANTS = 4;
     uint256 public fee;
@@ -46,11 +47,13 @@ contract Contest is Initializable {
     function initialize(
         address _owner,
         string memory _title,
+        string memory _description,
         uint256 _fee
     ) external {
         //__ERC721_init(_name, _symbol);
         owner = _owner;
         title = _title;
+        description = _description;
         fee = _fee;
         participationOpen = true;
         state = ContestState.RUNNING;
@@ -289,6 +292,7 @@ contract Contest is Initializable {
         returns (
             address,
             string memory,
+            string memory,
             address,
             uint8,
             uint256,
@@ -303,6 +307,7 @@ contract Contest is Initializable {
         return (
             owner,
             title,
+            description,
             winner,
             NUM_ALLOWED_PARTICIPANTS,
             fee,

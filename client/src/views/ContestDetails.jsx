@@ -19,14 +19,15 @@ const STATUS_FINISHED = 2;
 
 const OWNER_INDEX = 0;
 const TITLE_INDEX = 1;
-const WINNER_INDEX = 2;
-const MAX_PARTICIPANTS_INDEX = 3;
-const FEE_INDEX = 4;
-const CURRENT_ROUND_INDEX = 5;
-const PARTICIPATION_OPEN_INDEX = 6;
-const VOTING_OPEN_INDEX = 7;
-const QUALIFIERS_INDEX = 8;
-const STATE_INDEX = 9;
+const DESCRIPTION_INDEX = 2;
+const WINNER_INDEX = 3;
+const MAX_PARTICIPANTS_INDEX = 4;
+const FEE_INDEX = 5;
+const CURRENT_ROUND_INDEX = 6;
+const PARTICIPATION_OPEN_INDEX = 7;
+const VOTING_OPEN_INDEX = 8;
+const QUALIFIERS_INDEX = 9;
+const STATE_INDEX = 10;
 
 const ContestDetails = () => {
     const params = useParams();
@@ -198,10 +199,7 @@ const ContestDetails = () => {
     }
 
     const isAdmin = () => {
-        console.log('isAdmin 1 =>', details[OWNER_INDEX])
-        console.log('isAdmin 2 =>', accounts[0])
-        console.log('isAdmin 3 =>', details[OWNER_INDEX] == accounts[0])
-        return details[OWNER_INDEX].toLowerCase() == accounts[0].toLowerCase();
+        return (accounts[0] ? ( details[OWNER_INDEX].toLowerCase() == accounts[0].toLowerCase() ) : false);
     }
 
     const isContestant = () => {
@@ -210,7 +208,7 @@ const ContestDetails = () => {
             return false;
         }
         const allContestants = details[QUALIFIERS_INDEX][0];
-        const found = allContestants.find(key => key.toUpperCase() === accounts[0].toUpperCase()) != undefined;
+        const found = ( accounts[0] ? (allContestants.find(key => key.toUpperCase() === accounts[0].toUpperCase()) != undefined) : false );
         return found;
     }
 
@@ -375,8 +373,8 @@ const ContestDetails = () => {
                                                  * Disable vote button for self and for admins. 
                                                  * Also, if voting is disabled, or the projet is not running
                                                  */
-                                                const voteDisabled = (compareStr(c, accounts[0]) || compareStr(details[OWNER_INDEX], accounts[0]) ||
-                                                    details[VOTING_OPEN_INDEX] == false || details[STATE_INDEX] != STATUS_RUNNING);
+                                                const voteDisabled = (accounts[0] ? (compareStr(c, accounts[0]) || compareStr(details[OWNER_INDEX], accounts[0]) ||
+                                                    details[VOTING_OPEN_INDEX] == false || details[STATE_INDEX] != STATUS_RUNNING) : false);
                                                 return (
                                                     <Contestant key={c} address={c} contest={address} onVote={vote} voteDisabled={voteDisabled} />
                                                 )

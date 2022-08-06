@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Navbar, Footer } from './components';
 import Dialog from './components/Dialog';
-import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, NotFound  } from './views';
+import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, NotFound } from './views';
 import getWeb3 from "./getWeb3";
 import Web3Context from './store/web3-context';
 import ContestCloneFactory from "../../build/contracts/ContestCloneFactory.json";
@@ -48,15 +48,32 @@ function App() {
 
       const isUnlocked = await window?.ethereum?._metamask.isUnlocked();
       console.log('isUnlocked =>', { isUnlocked });
-      const _walletConnected = Boolean(_walletInstalled && isUnlocked && _accounts.length);
+      //const _walletConnected = Boolean(_walletInstalled && isUnlocked && _accounts.length);
+      let _walletConnected = false;
 
       console.log('_walletInstalled => ', _walletInstalled);
-      console.log('_walletConnected => ', _walletConnected);
+      //console.log('_walletConnected => ', _walletConnected);
 
       setWeb3(_web3);
 
       if (window.ethereum) {
         setWalletChainId(window.ethereum.chainId);
+
+        try {
+          const permissions = await window.ethereum.request({ method: 'wallet_getPermissions' });
+          console.log('permissions => ', permissions);
+          _walletConnected = Boolean(_walletInstalled && isUnlocked && _accounts.length > 0 && permissions.length > 0);
+          console.log('_walletConnected => ', _walletConnected);
+        }
+        catch (error) {
+          if (error.code === 4001) {
+            // EIP-1193 userRejectedRequest error
+            console.log('Please connect to MetaMask.');
+          }
+          else {
+            console.error(error);
+          }
+        }
       }
       else if (window.web3) {
         setWalletChainId(window.web3.currentProvider.chainId);
@@ -213,14 +230,20 @@ function App() {
     }
     window.ethereum.on('disconnect', handleWalletDisconnected);
 
-    const handleAccountsChanged = (newAccounts) => {
+    const handleAccountsChanged = async (newAccounts) => {
       // Time to reload your interface with accounts[0]!
       let isConnected = newAccounts.length ? true : false;
       console.log('Inside accountsChanged, isConnected', isConnected);
       console.log('Inside accountsChanged, newAccounts', newAccounts);
+      
+      const permissions = await window.ethereum.request({ method: 'wallet_getPermissions' });
+      console.log('Inside accountsChanged, permissions => ', permissions);
+      const isUnlocked = await window?.ethereum?._metamask.isUnlocked();
+      const _walletConnected = Boolean(walletInstalled && isUnlocked && newAccounts.length > 0 && permissions.length > 0);
+      console.log('Inside accountsChanged, _walletConnected', _walletConnected);
 
       setAccounts(newAccounts);
-      setWalletConnected(isConnected);
+      setWalletConnected(_walletConnected);
     }
     window.ethereum.on('accountsChanged', handleAccountsChanged);
   }
@@ -277,15 +300,15 @@ function App() {
         //onCancel={() => alert(456)}
         //cancelLabel="No"
         />
-          <Routes>
-            <Route path="/" exact caseSensitive={false} element={<Home />} />
-            <Route path="/contests/new" exact caseSensitive={false} element={<NewContest />} />
-            <Route path="/contests/:id/:cId" exact caseSensitive={false} element={<ContestantDetails />} />
-            <Route path="/contests/:id" exact caseSensitive={false} element={<ContestDetails />} />
-            <Route path="/contests" exact caseSensitive={false} element={<Contests />} />
-            <Route path="/contestants" exact caseSensitive={false} element={<Contestants />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+        <Routes>
+          <Route path="/" exact caseSensitive={false} element={<Home />} />
+          <Route path="/contests/new" exact caseSensitive={false} element={<NewContest />} />
+          <Route path="/contests/:id/:cId" exact caseSensitive={false} element={<ContestantDetails />} />
+          <Route path="/contests/:id" exact caseSensitive={false} element={<ContestDetails />} />
+          <Route path="/contests" exact caseSensitive={false} element={<Contests />} />
+          <Route path="/contestants" exact caseSensitive={false} element={<Contestants />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
 
         <Footer />
       </div>

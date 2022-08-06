@@ -36,7 +36,7 @@ const Toast = ({ type, show, msg }) => {
     }
     return (
         <div
-            className={`fixed top-5 right-5 group-hover:left-0 pointer-events-auto flex items-center min-w-[200px] w-auto max-w-xs p-4 mb-4 rounded-lg shadow-lg shadow-[#ccc] ${bgColor}`}
+            className={`fixed z-10 top-5 right-5 group-hover:left-0 pointer-events-auto flex items-center min-w-[200px] w-auto max-w-xs p-4 mb-4 rounded-lg shadow-lg shadow-[#ccc] ${bgColor}`}
             role="alert"
         >
             <div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-white rounded-lg">

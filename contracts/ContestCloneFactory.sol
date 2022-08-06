@@ -24,12 +24,14 @@ contract ContestCloneFactory {
 
     function createClone(
         string memory _title,
+        string memory _description,
         uint256 _fee
     ) external returns (address) {
         address clone = Clones.clone(implementation);
         Contest(clone).initialize(
             msg.sender,
             _title,
+            _description,
             _fee
         );
         //contests.push(Contest(clone));

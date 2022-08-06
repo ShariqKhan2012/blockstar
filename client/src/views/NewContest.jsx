@@ -4,6 +4,7 @@ import Button from '../components/Button';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import Toast from '../components/Toast';
+import ContainedLayout from '../layouts/Contained';
 import Web3Context from '../store/web3-context';
 import { getAppChainId, getNetworkName } from '../utils/utils';
 
@@ -91,21 +92,27 @@ const NewContest = () => {
 
     if (!web3Ctxt.walletInstalled) {
         return (
-            <div className="max-w-7xl mx-auto p-4">
+            <ContainedLayout>
+                <div className="grid mb-12">
+                    <h1 className="text-#333 text-4xl font-bold text-center mb-2">New Contest</h1>
+                </div>
                 <Message type="error">
                     You need to have MetaMask installed and activated on your browser to be able to continue.
                 </Message>
-            </div>
+            </ContainedLayout>
         )
     }
 
     if (!web3Ctxt.walletConnected) {
         return (
-            <div className="max-w-7xl mx-auto p-4">
+            <ContainedLayout>
+                <div className="grid mb-12">
+                    <h1 className="text-#333 text-4xl font-bold text-center mb-2">New Contest</h1>
+                </div>
                 <Message type="error">
                     Metamask not connected to the site. Click on the 'Connect' button to continue
                 </Message>
-            </div>
+            </ContainedLayout>
         )
     }
     console.log('web3Ctxt.currentChainId =>', web3Ctxt.currentChainId);
@@ -115,20 +122,25 @@ const NewContest = () => {
     if (getAppChainId() != web3Ctxt.walletChainId) {
         const appNetwokName = getNetworkName(getAppChainId());
         return (
-            <div className="max-w-7xl mx-auto p-4">
+            <ContainedLayout>
+                <div className="grid mb-12">
+                    <h1 className="text-#333 text-4xl font-bold text-center mb-2">New Contest</h1>
+                </div>
                 <Message type="error">
                     This Dapp lives on the {appNetwokName} chain. Click on the 'Switch' button to change to the {appNetwokName} network.
                 </Message>
-            </div>
+            </ContainedLayout>
         )
     }
 
     return (
-        <div className="max-w-lg mx-auto py-16">
-            <div className="p-8 bg-white rounded-lg">
-                <Loader show={loading} />
-                <Toast show={toastVisible} type={notifType} msg={msg} />
-                <h1 className="text-teal text-3xl font-bold mb-4">Fill the contest details</h1>
+        <ContainedLayout>
+            <div className="grid mb-12">
+                <h1 className="text-#333 text-4xl font-bold text-center mb-2">Create A New Contest</h1>
+            </div>
+            <Loader show={loading} />
+            <Toast show={toastVisible} type={notifType} msg={msg} />
+            <div className="max-w-lg mx-auto rounded-lg p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                 <form onSubmit={handleSubmit(onFormSubmit, onError)} className="mt-2">
                     <div className="mb-6">
                         <input name="title" {...register('title', registerOptions.title)} className="p-3 w-full border border-slate-300 rounded-md focus:outline-none" type="text" placeholder="Title of the contest " />
@@ -147,7 +159,7 @@ const NewContest = () => {
                     </div>
                 </form>
             </div>
-        </div>
+        </ContainedLayout>
     )
 }
 

@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 const NavItem = ({ title, url, classProps }) => {
     return (
         <li className="px-4 py-2 flex itemsz-center">
-            <NavLink to={url} className={`font-bold text-sm ${classProps}`}>{title}</NavLink>
+            <NavLink to={url} className={`font-bold text-md ${classProps}`}>{title}</NavLink>
         </li>
     )
 }

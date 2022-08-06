@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
 import Web3Context from '../store/web3-context';
 import ContestCard from '../components/ContestCard';
+import Message from '../components/Message';
 import { getRandomThumbnail } from '../utils/utils';
 import ContainedLayout from '../layouts/Contained';
 
@@ -51,13 +51,21 @@ const Contests = () => {
 			<div className="grid mb-12">
 				<h1 className="text-[#333] text-4xl font-bold text-center">Contests</h1>
 			</div>
-			<div className="grid grid-cols-4 gap-y-16 gap-x-[80px]">
-				{
-					contests.map((c) => {
-						return <ContestCard key={c.addr} title={c.title} addr={c.addr} link="/contests/1" thumbnailUrl={getRandomThumbnail(1, 6)} />
-					})
-				}
-			</div>
+			{
+				(contests.length > 0)
+					?
+					<div className="grid grid-cols-4 gap-y-16 gap-x-[80px]">
+						{
+							contests.map((c) => {
+								return <ContestCard key={c.addr} title={c.title} addr={c.addr} link="/contests/1" thumbnailUrl={getRandomThumbnail(1, 6)} />
+							})
+						}
+					</div>
+					:
+					<Message type="error">
+						There are no contests yet.
+					</Message>
+			}
 		</ContainedLayout>
 	)
 }
