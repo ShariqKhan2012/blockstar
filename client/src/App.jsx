@@ -239,6 +239,10 @@ function App() {
       const permissions = await window.ethereum.request({ method: 'wallet_getPermissions' });
       console.log('Inside accountsChanged, permissions => ', permissions);
       const isUnlocked = await window?.ethereum?._metamask.isUnlocked();
+      
+      console.log('Inside accountsChanged, walletInstalled', walletInstalled);
+      console.log('Inside accountsChanged, isUnlocked', isUnlocked);
+      
       const _walletConnected = Boolean(walletInstalled && isUnlocked && newAccounts.length > 0 && permissions.length > 0);
       console.log('Inside accountsChanged, _walletConnected', _walletConnected);
 

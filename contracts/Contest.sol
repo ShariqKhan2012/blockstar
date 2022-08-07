@@ -15,7 +15,11 @@ contract Contest is Initializable {
     bool public votingOpen;
     bool public participationOpen;
 
-    enum ContestState { RUNNING, PAUSED, FINISHED}
+    enum ContestState {
+        RUNNING,
+        PAUSED,
+        FINISHED
+    }
     ContestState state;
 
     struct Contestant {
@@ -74,40 +78,39 @@ contract Contest is Initializable {
         _;
     }
 
-    function stopContest() public isOwner{
+    function stopContest() public isOwner {
         require(state != ContestState.FINISHED, "___FINISHED___");
         state = ContestState.FINISHED;
     }
 
-    function pauseContest() public isOwner isRunning{
+    function pauseContest() public isOwner isRunning {
         state = ContestState.PAUSED;
     }
 
-    function resumeContest() public isOwner isPaused{
+    function resumeContest() public isOwner isPaused {
         state = ContestState.RUNNING;
     }
 
-    function enableParticipation() public isOwner isRunning {
+    /*function enableParticipation() public isOwner isRunning {
         participationOpen = true;
-    }
+    }*/
 
-    function disableParticipation() public isOwner isRunning{
+    function disableParticipation() public isOwner isRunning {
         participationOpen = false;
     }
 
-    function openVoting() public isOwner isRunning{
+    function openVoting() public isOwner isRunning {
         require(!participationOpen, "___PARTICIPATION_OPEN___");
         //require( qualifiers[0].length == NUM_ALLOWED_PARTICIPANTS, "Not enough participants" );
-        require( qualifiers[0].length > 0, "___NO_CONTESTANTS___" );
-        if( qualifiers[0].length > 1) {
+        require(qualifiers[0].length > 0, "___NO_CONTESTANTS___");
+        if (qualifiers[0].length > 1) {
             votingOpen = true;
-        }
-        else {
+        } else {
             pickWinner();
         }
     }
 
-    function closeVoting() public isOwner isRunning{
+    function closeVoting() public isOwner isRunning {
         require(votingOpen, "___VOTING_CLOSED___");
         require(!participationOpen, "___PARTICIPATION_OPEN___");
         votingOpen = false;
@@ -124,7 +127,10 @@ contract Contest is Initializable {
         //uint8 total_rounds = NUM_ALLOWED_PARTICIPANTS - 1;
 
         //if (currentRound < total_rounds - 1) {
-        if ( (qualifiers[0].length <= 2) || (currentRound < qualifiers[0].length - 1) ) {
+        if (
+            (qualifiers[0].length <= 2) ||
+            (currentRound < qualifiers[0].length - 1)
+        ) {
             uint8 tmpCId = 0;
             uint256 tmpLowestVotes = contestants[
                 qualifiers[currentRound][tmpCId]
@@ -147,11 +153,14 @@ contract Contest is Initializable {
             for (uint8 i = 0; i < qualifiers[currentRound].length; i++) {
                 //Skip the one with the lowest votes
                 if (i != tmpCId) {
-                    qualifiers[currentRound + 1].push(
-                        qualifiers[currentRound][i]
-                    );
-                    contestants[qualifiers[currentRound][i]]
-                        .progressedToRound = currentRound + 1;
+                    if (qualifiers[currentRound + 1].length == 0) {
+                        address[] memory a;
+                        qualifiers.push(a);
+                    }
+
+                    qualifiers[currentRound + 1].push( qualifiers[currentRound][i] );
+                    
+                    contestants[qualifiers[currentRound][i]].progressedToRound = currentRound + 1;
                 }
             }
             currentRound++;
@@ -160,7 +169,7 @@ contract Contest is Initializable {
         }
     }
 
-    function pickWinner() private isRunning{
+    function pickWinner() private isRunning {
         /*
          * For final score, we use weighted scores of all the roundsWeighted
          * final score = 60% x final (3rd) Round + 30% x 2nd round + 10% x 1st round
@@ -172,16 +181,21 @@ contract Contest is Initializable {
         uint256 finalistTwoFinalScore = 60 * finalistTwoAllVotes[2] + 30 * finalistTwoAllVotes[1] + 10 * finalistTwoAllVotes[0];*/
 
         require(qualifiers[0].length > 0, "___NO_CONTESTANTS___");
-        
-        if( currentRound == 0 && qualifiers[0].length == 1 ) {
+
+        if (currentRound == 0 && qualifiers[0].length == 1) {
             winner = payable(qualifiers[0][0]);
-        }
-        else {
+        } else {
             uint256 finalistOneFinalScore = 0;
             uint256 finalistTwoFinalScore = 0;
-            for(uint8 i = 0; i < currentRound; i++ ) {
-                finalistOneFinalScore += 2 * i * contestants[qualifiers[currentRound][0]].votesReceived[i];
-                finalistTwoFinalScore += 2 * i * contestants[qualifiers[currentRound][1]].votesReceived[i];
+            for (uint8 i = 0; i < currentRound; i++) {
+                finalistOneFinalScore +=
+                    2 *
+                    i *
+                    contestants[qualifiers[currentRound][0]].votesReceived[i];
+                finalistTwoFinalScore +=
+                    2 *
+                    i *
+                    contestants[qualifiers[currentRound][1]].votesReceived[i];
             }
 
             if (finalistTwoFinalScore > finalistOneFinalScore) {
@@ -219,18 +233,25 @@ contract Contest is Initializable {
         return string(bstr);
     }
 
-    function participate( bytes32 _name, string memory _performanceLink, string memory _bio ) public payable isRunning{
+    function participate(
+        bytes32 _name,
+        string memory _performanceLink,
+        string memory _bio
+    ) public payable isRunning {
         require(participationOpen, "___PARTICIPATION_CLOSED___");
-        require( msg.value == fee, "___FEE___" );
+        require(msg.value == fee, "___FEE___");
         require(msg.sender != owner, "___NO_ADMIN___");
-        require( bytes(contestants[msg.sender].bio).length == 0, "___EXISTING___" );
+        require(
+            bytes(contestants[msg.sender].bio).length == 0,
+            "___EXISTING___"
+        );
         //require( qualifiers[0].length < NUM_ALLOWED_PARTICIPANTS, "Maximum participants reached" );
         require(_name.length != 0, "___EMPTY_NAME___");
         require(bytes(_performanceLink).length != 0, "___EMOTY_LINK___");
         require(bytes(_bio).length != 0, "___EMPTY_BIO___");
         require(bytes(_bio).length <= 60, "___LONG_BIO___");
 
-        if(qualifiers.length == 0) {
+        if (qualifiers.length == 0) {
             address[] memory a;
             qualifiers.push(a);
         }
@@ -250,27 +271,46 @@ contract Contest is Initializable {
         }*/
     }
 
-    function submitPerformamce(string memory _performanceLink) public payable isRunning{
+    function submitPerformamce(string memory _performanceLink)
+        public
+        payable
+        isRunning
+    {
         require(participationOpen, "___PARTICIPATION_CLOSED___");
         //require( qualifiers[0].length < NUM_ALLOWED_PARTICIPANTS, "Maximum participants reached" );
-        require( bytes(contestants[msg.sender].bio).length != 0, "___INVALID_CONTESTANT___" );
-        require( contestants[msg.sender].progressedToRound == currentRound, "___ELIMINATED___" );
+        require(
+            bytes(contestants[msg.sender].bio).length != 0,
+            "___INVALID_CONTESTANT___"
+        );
+        require(
+            contestants[msg.sender].progressedToRound == currentRound,
+            "___ELIMINATED___"
+        );
         require(bytes(_performanceLink).length != 0, "___EMPTY_LINK___");
-        require(contestants[msg.sender].performanceLinks.length == currentRound, "___SUBMITTED___");
+        require(
+            contestants[msg.sender].performanceLinks.length == currentRound,
+            "___SUBMITTED___"
+        );
 
         //contestants[msg.sender].performanceLinks[currentRound] = _performanceLink;
         contestants[msg.sender].performanceLinks.push(_performanceLink);
     }
 
-    function vote(address _addr) public payable isRunning{
+    function vote(address _addr) public payable isRunning {
         require(votingOpen, "___VOTING_CLOSED___");
         require(msg.sender != owner, "___NO_ADMIN___");
         require(msg.sender != _addr, "___NO_SELF___");
-        require( bytes(contestants[_addr].bio).length != 0, "___INVALID_CONTESTANT___" );
-        require( contestants[_addr].progressedToRound == currentRound, "___ELIMINATED___" );
+        require(
+            bytes(contestants[_addr].bio).length != 0,
+            "___INVALID_CONTESTANT___"
+        );
+        require(
+            contestants[_addr].progressedToRound == currentRound,
+            "___ELIMINATED___"
+        );
         //also check whether the contestant has advanced to this round or not
         //contestants[_addr].votesReceived[currentRound] += 1;
-        if(contestants[_addr].votesReceived.length != currentRound + 1) {
+        if (contestants[_addr].votesReceived.length != currentRound + 1) {
             contestants[_addr].votesReceived.push(0);
         }
         contestants[_addr].votesReceived[currentRound] += 1;
@@ -319,7 +359,21 @@ contract Contest is Initializable {
         );
     }
 
-    function getContestantDetails(address _addr) public view returns (Contestant memory, address, uint8, bool){
-        return (contestants[_addr], owner, currentRound, (votingOpen == false || state != ContestState.RUNNING) );
+    function getContestantDetails(address _addr)
+        public
+        view
+        returns (
+            Contestant memory,
+            address,
+            uint8,
+            bool
+        )
+    {
+        return (
+            contestants[_addr],
+            owner,
+            currentRound,
+            (votingOpen == false || state != ContestState.RUNNING)
+        );
     }
 }

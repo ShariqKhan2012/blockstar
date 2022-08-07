@@ -11,6 +11,7 @@ import { ZERO_ADDR } from '../utils/constants';
 import Toast from '../components/Toast';
 import Contestant from '../components/Contestant';
 import ContainedLayout from '../layouts/Contained';
+import SubmitPerformanceForm from '../components/SubmitPerformanceForm';
 //import img from '../src/1.jpg'
 
 const STATUS_RUNNING = 0;
@@ -178,7 +179,23 @@ const ContestDetails = () => {
         setLoading(false);
     }
 
+    const submitPerformance = async (data) => {
+        setLoading(false);
+        try {
+            await contest.methods.submitPerformance(submitPerformamce).send({
+                from: accounts[0]
+            })
+            setMsg('Successfully submitted!!');
+            setFetchDetails(true);
+        }
+        catch(e) {
+            setMsg('Failed: ' + (e.message ? extractErrorCode(e.message) : 'An error occured'));
+        }
+        setToastVisible(true);
+    }
+
     const vote = async (_addr) => {
+        console.log('Inside Vote, _addr', _addr);
         setLoading(true);
         try {
             await contest.methods.vote(_addr).send({
@@ -199,7 +216,7 @@ const ContestDetails = () => {
     }
 
     const isAdmin = () => {
-        return (accounts[0] ? ( details[OWNER_INDEX].toLowerCase() == accounts[0].toLowerCase() ) : false);
+        return (accounts[0] ? (details[OWNER_INDEX].toLowerCase() == accounts[0].toLowerCase()) : false);
     }
 
     const isContestant = () => {
@@ -208,7 +225,7 @@ const ContestDetails = () => {
             return false;
         }
         const allContestants = details[QUALIFIERS_INDEX][0];
-        const found = ( accounts[0] ? (allContestants.find(key => key.toUpperCase() === accounts[0].toUpperCase()) != undefined) : false );
+        const found = (accounts[0] ? (allContestants.find(key => key.toUpperCase() === accounts[0].toUpperCase()) != undefined) : false);
         return found;
     }
 
@@ -239,9 +256,20 @@ const ContestDetails = () => {
             console.log('Status control for admins')
 
             statusControl = <Switch value={parseInt(details[STATE_INDEX]) == STATUS_RUNNING} onToggle={toggleStatus} onLabel="Running" offLabel="Paused" />;
-            //Participation Button
-            participationControl = <Switch value={details[PARTICIPATION_OPEN_INDEX]} onToggle={toggleParticipation} disabled={parseInt(details[STATE_INDEX]) != STATUS_RUNNING} onLabel="Open" offLabel="Closed" />;
-            //Voting Button. Disable ,if contest is paused. Or if Participation is still On
+            /*
+             * Participation Button
+             * Should be disabled if:
+             * 1. STATUS is not RUNNING
+             * 2. Participation has been closed once
+             */
+            participationControl = <Switch value={details[PARTICIPATION_OPEN_INDEX]} onToggle={toggleParticipation} disabled={parseInt(details[STATE_INDEX]) != STATUS_RUNNING || (details[PARTICIPATION_OPEN_INDEX] == false)} onLabel="Open" offLabel="Closed" />;
+            
+            /*
+             * Voting Button. 
+             * Should be disabled if:
+             * 1. contest is not RUNNING. 
+             * 2. if Participation is still On
+             */
             votingControl = <Switch value={details[VOTING_OPEN_INDEX]} onToggle={toggleVoting} disabled={(parseInt(details[STATE_INDEX]) != STATUS_RUNNING) || details[PARTICIPATION_OPEN_INDEX]} onLabel="Open" offLabel="Closed" />;
         }
         else {
@@ -284,8 +312,8 @@ const ContestDetails = () => {
             if (currentRound == 0 && details[PARTICIPATION_OPEN_INDEX] == true) {
                 return (
                     <>
-                        <h1 className="text-teal text-2xl font-bold ">Participate</h1>
-                        <div className="mt-6 rounded-lg p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                        <h1 className="mt-12 text-2xl font-bold ">Participate</h1>
+                        <div className="mt-6 rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                             <ParticipateForm onSubmit={participate} />
                         </div>
                     </>
@@ -313,7 +341,7 @@ const ContestDetails = () => {
             else {
                 return (
                     <div className="mt-8 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
-                        <p>Submit your performance</p>
+                        <SubmitPerformanceForm onSubmit={submitPerformance}/>
                     </div>
                 )
             }
@@ -330,31 +358,40 @@ const ContestDetails = () => {
                 <ContainedLayout>
                     <div className="grid mb-12">
                         <h1 className="text-#333 text-4xl font-bold text-center mb-2">{details[TITLE_INDEX]}</h1>
-                        <span className="font-regular text-sm block text-center"><strong>Address: </strong>{address}</span>
+                        <span className="font-regular text-xs md:text-sm block text-center"><strong>Address: </strong>{address}</span>
                     </div>
 
                     <hr />
 
-                    <div className="grid sm:grid-rows md:grid-cols-3 mt-12 gap-y-16 gap-x-[80px]">
+                    <div className="grid sm:grid-rows md:grid-cols-3 mt-12 gap-y-12 gap-x-[80px]">
                         <div className="sm:col-span-2 sm:order-2 md:order-1">
                             <div className="mb-12">
+                                <h2 className="text-2xl font-bold">Description</h2>
+                                <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">
+                                    {details[DESCRIPTION_INDEX]}
+                                </p>
+                            </div>
+
+                            <hr />
+
+                            <div className="my-12">
                                 <h1 className="text-teal text-2xl font-bold">Contest Details</h1>
                                 <div className="grid sm:grid-rows md:grid-cols-2 mt-6 gap-y-5 gap-x-4">
-                                    <div className="rounded-lg p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                                    <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-blue-500">Owner</h2>
-                                        <p className="mt-2 text-[#444] text-sm font-regular leading-7">{details[OWNER_INDEX]}</p>
+                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{details[OWNER_INDEX]}</p>
                                     </div>
-                                    <div className="rounded-lg p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                                    <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-red-500">Participation Fee</h2>
-                                        <p className="mt-2 text-[#444] text-sm font-regular leading-7">{web3.utils.fromWei(details[FEE_INDEX], 'ether')} <strong>Ether</strong></p>
+                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{web3.utils.fromWei(details[FEE_INDEX], 'ether')} <strong>Ether</strong></p>
                                     </div>
-                                    <div className="rounded-lg p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                                    <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-yellow-500">Current Round</h2>
-                                        <p className="mt-2 text-[#444] text-sm font-regular leading-7">{details[CURRENT_ROUND_INDEX]}</p>
+                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{details[CURRENT_ROUND_INDEX]}</p>
                                     </div>
-                                    <div className="rounded-lg p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                                    <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-green-500">Winner</h2>
-                                        <p className="mt-2 text-[#444] text-sm font-regular leading-7">
+                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">
                                             {details[WINNER_INDEX] == ZERO_ADDR ? 'Not declared yet' : details[WINNER_INDEX]}
                                         </p>
                                     </div>
@@ -362,6 +399,7 @@ const ContestDetails = () => {
                             </div>
 
                             <hr />
+
                             <div className="mt-12">
                                 <h1 className="text-teal text-2xl font-bold">Contestants</h1>
                                 {
@@ -376,7 +414,7 @@ const ContestDetails = () => {
                                                 const voteDisabled = (accounts[0] ? (compareStr(c, accounts[0]) || compareStr(details[OWNER_INDEX], accounts[0]) ||
                                                     details[VOTING_OPEN_INDEX] == false || details[STATE_INDEX] != STATUS_RUNNING) : false);
                                                 return (
-                                                    <Contestant key={c} address={c} contest={address} onVote={vote} voteDisabled={voteDisabled} />
+                                                    <Contestant key={c} address={c} contest={address} onVote={e => vote(c)} voteDisabled={voteDisabled} />
                                                 )
                                             })}
                                         </div>
@@ -388,7 +426,7 @@ const ContestDetails = () => {
 
                         <div className="sm:col-span-1 sm:order-1 md:order-2">
                             <h1 className="text-#333 text-2xl font-bold">Status</h1>
-                            <div className="grid grid-rows rounded-xl mt-6 p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                            <div className="grid grid-rows rounded-xl mt-6 mb-12 p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                 <div className="flex">
                                     <strong className="mr-2">Status:</strong> {statusControl}
                                 </div>
@@ -399,6 +437,8 @@ const ContestDetails = () => {
                                     <strong className="mr-2">Voting:</strong> {votingControl}
                                 </div>
                             </div>
+
+                            <hr />
 
                             <Widget />
                         </div>

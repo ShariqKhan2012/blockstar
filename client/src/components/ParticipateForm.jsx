@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import Button from './Button';
-import DefaultAvatar from '../assets/default-avatar.png'
 
 const ParticipateForm = (props) => {
     const { register, handleSubmit, formState: { errors }, setError, reset } = useForm();

@@ -16,6 +16,7 @@ const NewContest = () => {
 
     const registerOptions = {
         title: { required: "This field is required" },
+        description: { required: "This field is required" },
         fee: { required: "This field is required" },
     };
 
@@ -30,7 +31,7 @@ const NewContest = () => {
         setToastVisible(false);
         setLoading(true);
         try {
-            await web3Ctxt.factory.methods.createClone(data.title, fee).send({ from: web3Ctxt.accounts[0] })
+            await web3Ctxt.factory.methods.createClone(data.title, data.description, fee).send({ from: web3Ctxt.accounts[0] })
             //setError(false);
             console.log('success');
             setNotifType('success');
@@ -146,6 +147,12 @@ const NewContest = () => {
                         <input name="title" {...register('title', registerOptions.title)} className="p-3 w-full border border-slate-300 rounded-md focus:outline-none" type="text" placeholder="Title of the contest " />
                         <small className="text-[#f00]">
                             {errors?.title && errors.title.message}
+                        </small>
+                    </div>
+                    <div className="mb-6">
+                        <textarea name="description" maxLength="100" {...register('description', registerOptions.bio)} className="p-3 w-full border border-slate-300 rounded-md focus:outline-none" placeholder="Describe the contest"></textarea>
+                        <small className="text-[#f00]">
+                            {errors?.description && errors.description.message}
                         </small>
                     </div>
                     <div className="mb-6">

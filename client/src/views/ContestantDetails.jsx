@@ -78,6 +78,7 @@ const ContestantDetails = () => {
                 &&
                 <ContainedLayout>
                     <div className="grid mb-12 align-center">
+                        <h1 className="text-#333 text-4xl font-bold text-center mb-2">{details[0]['name']}</h1>
                         <h1 className="text-#333 text-4xl font-bold text-center mb-2">{web3.utils.toAscii(details[0]['name'])}</h1>
                         <span className="font-regular text-sm block text-center"><strong>Address: </strong>{contestantId}</span>
                         <div className="mt-4 mx-auto">
@@ -86,13 +87,15 @@ const ContestantDetails = () => {
                     </div>
 
 
-                    <div className="grid grid-rows mt-16 gap-y-16 gap-x-[80px]">
+                    <div className="grid grid-rows mt-16 gap-y-12 gap-x-[80px]">
                         <div className="">
                             <h2 className="text-2xl font-bold">About Me</h2>
                             <p className="mt-2 text-[#444] text-sm font-regular leading-7">
                                 {details[0].bio}
                             </p>
                         </div>
+
+                        <hr />
 
                         <div className="">
                             <h2 className="text-2xl font-bold">Performances</h2>
