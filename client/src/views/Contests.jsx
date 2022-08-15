@@ -56,8 +56,8 @@ const Contests = () => {
 					?
 					<div className="grid grid-cols-4 gap-y-16 gap-x-[80px]">
 						{
-							contests.map((c) => {
-								return <ContestCard key={c.addr} title={c.title} addr={c.addr} link="/contests/1" thumbnailUrl={getRandomThumbnail(1, 6)} />
+							contests.map((c,index) => {
+								return <ContestCard key={c.addr} title={c.title} addr={c.addr} link="/contests/1" thumbnailUrl={getRandomThumbnail(index)} />
 							})
 						}
 					</div>

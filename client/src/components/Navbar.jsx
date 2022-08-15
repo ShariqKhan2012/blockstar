@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 //import Logo from '../logo.png'
-import Logo from '../assets/logo.svg'
+import Logo from '../assets/images/logo.svg'
 import ConnnectWalletButton from './ConnectWalletButton';
 
 import Web3Context from '../store/web3-context';
@@ -25,6 +25,7 @@ const Navbar = () => {
                 <ul className="flex">
                     <NavItem title="Home" url="/" classProps="" />
                     <NavItem title="Contests" url="/contests" classProps="" />
+                    <NavItem title="Credits" url="/credits" classProps="" />
                     <NavItem title="About" url="#" classProps="" />
                     <NavItem title="Contact" url="#" classProps="" />
                 </ul>

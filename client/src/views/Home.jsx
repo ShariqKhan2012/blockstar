@@ -14,7 +14,7 @@ const ContestantDetails = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-16 gap-x-[80px]">
                         <div className="order-2 md:order-1 grid items-center">
                             <div>
-                                <h1 className="text-#333 text-3xl font-bold text-center">The Best Place For Talent Contests</h1>
+                                <h1 className="text-#333 text-3xl font-bold text-center">The Best Place For Music Contests</h1>
                                 <p className="mt-2 text-[#444] text-sm font-regular leading-7">
                                     Start a contest, and discover new talent. Or partipate in one of the many exciting contests
                                     and show the world how awesome you are. On a global platform!
@@ -25,7 +25,7 @@ const ContestantDetails = () => {
                             </div>
                         </div>
                         <div className="order-1 md:order-2">
-                            <img className="rounded-lg" src={`/src/images/1.jpg`} alt="avatar" />
+                            <img className="rounded-lg" src={`/src/assets/images/hero.png`} alt="avatar" />
                         </div>
                     </div>
                 </section>

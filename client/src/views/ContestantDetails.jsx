@@ -4,8 +4,15 @@ import Web3Context from '../store/web3-context';
 import ContestContract from '../../../build/contracts/Contest.json';
 import Button from '../components/Button';
 import Message from '../components/Message';
+import Toast from '../components/Toast';
 import Loader from '../components/Loader';
 import ContainedLayout from '../layouts/Contained';
+import { extractErrorCode, compareStr } from '../utils/utils';
+
+const CONTESTANT_DETAILS_INDEX = 0;
+const OWNER_INDEX = 1;
+const CURRENT_ROUND_INDEX = 2;
+const VOTING_STATUS_INDEX = 3;
 
 const ContestantDetails = () => {
     const params = useParams();
@@ -16,6 +23,9 @@ const ContestantDetails = () => {
     const [details, setDetails] = useState(undefined);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [toastVisible, setToastVisible] = useState(false);
+    const [notifType, setNotifType] = useState('info');
+    const [msg, setMsg] = useState('');
     const { web3, factory, accounts } = useContext(Web3Context);
 
     useEffect(() => {
@@ -66,23 +76,52 @@ const ContestantDetails = () => {
         )
     }
 
-    const onVote = () => {
+    const onVote = async () => {
+        console.log('Inside Vote, contestantId', contestantId);
+        setLoading(true);
+        try {
+            await contest.methods.vote(contestantId).send({
+                from: accounts[0],
+                handleRevert: true
+            })
+            setNotifType('success');
+            setMsg('Success!!');
+        }
+        catch (e) {
+            console.log('Vote failed => ', e.message)
+            console.log('Vote failed 2=> ', extractErrorCode(e.message))
+            setNotifType('error');
+            setMsg('Failed: ' + (e.message ? extractErrorCode(e.message) : 'An error occured'));
+        }
+        setLoading(false);
+        setToastVisible(true);
+    }
 
+    const isVotingDisabled = () => {
+        if (!accounts[0]) {
+            return true;
+        }
+        if (details[VOTING_STATUS_INDEX] == true || compareStr(contestantId, accounts[0]) || 
+            compareStr(details[OWNER_INDEX], accounts[0] ) ) {
+                //console.log('Disabling here 1', )
+            return true;
+        }
+        return false;
     }
 
     return (
         <>
             <Loader show={loading} />
+            <Toast show={toastVisible} type={notifType} msg={msg} />
             {
                 (details != undefined)
                 &&
                 <ContainedLayout>
                     <div className="grid mb-12 align-center">
-                        <h1 className="text-#333 text-4xl font-bold text-center mb-2">{details[0]['name']}</h1>
-                        <h1 className="text-#333 text-4xl font-bold text-center mb-2">{web3.utils.toAscii(details[0]['name'])}</h1>
+                        <h1 className="text-#333 text-4xl font-bold text-center mb-2">{web3.utils.toAscii(details[CONTESTANT_DETAILS_INDEX]['name'])}</h1>
                         <span className="font-regular text-sm block text-center"><strong>Address: </strong>{contestantId}</span>
                         <div className="mt-4 mx-auto">
-                            <Button disabled={details[3]} onVote={onVote} label="Vote" />
+                            <Button disabled={isVotingDisabled()} onClick={onVote} label="Vote" />
                         </div>
                     </div>
 
@@ -91,7 +130,7 @@ const ContestantDetails = () => {
                         <div className="">
                             <h2 className="text-2xl font-bold">About Me</h2>
                             <p className="mt-2 text-[#444] text-sm font-regular leading-7">
-                                {details[0].bio}
+                                {details[CONTESTANT_DETAILS_INDEX].bio}
                             </p>
                         </div>
 
@@ -100,20 +139,20 @@ const ContestantDetails = () => {
                         <div className="">
                             <h2 className="text-2xl font-bold">Performances</h2>
                             <div className="mt-4 grid grid-rows md:grid-cols-3 gap-x-6">
-                                {details[0]['performanceLinks'].map((link, i) => {
+                                {details[CONTESTANT_DETAILS_INDEX]['performanceLinks'].map((link, i) => {
                                     return (
                                         <div key={i} className="bg-[#fafafa] border-[1px] border-[#ddd] p-6">
-                                            <h2 className="fonts-['Montserrat'] text-md font-medium text-center">Round {i + 1}</h2>
+                                            <h2 className="fonts-['Montserrat'] text-md font-medium text-center">{i ? `Round ${i}` : 'Audition Round'} </h2>
                                             <div className="mt-4">
                                                 <iframe className="max-w-[100%]" width="350" height="200"
-                                                    src="https://www.youtube.com/embed/tgbNymZ7vqY?controls=1">
+                                                    src={`https://www.youtube.com/embed/${link}?controls=1`}>
                                                 </iframe>
                                             </div>
                                             <p className="mt-4">
                                                 <span className="font-bold">Votes received: </span>
-                                                <span className="font-regular">{details[0]['votesReceived'][i] ?? 0}</span>
+                                                <span className="font-regular">{details[CONTESTANT_DETAILS_INDEX]['votesReceived'][i] ?? 0}</span>
                                             </p>
-                                            {(details[2] == i) && <div className="mt-4"><Button disabled={details[3]} onVote={onVote} label="Vote" /></div>}
+                                            {(details[CURRENT_ROUND_INDEX] == i) && <div className="mt-4"><Button disabled={isVotingDisabled()} onClick={onVote} label="Vote" /></div>}
                                         </div>
                                     )
                                 })}

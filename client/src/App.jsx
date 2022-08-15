@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Navbar, Footer } from './components';
 import Dialog from './components/Dialog';
-import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, NotFound } from './views';
+import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, Credits, NotFound } from './views';
 import getWeb3 from "./getWeb3";
 import Web3Context from './store/web3-context';
 import ContestCloneFactory from "../../build/contracts/ContestCloneFactory.json";
@@ -231,6 +231,9 @@ function App() {
     window.ethereum.on('disconnect', handleWalletDisconnected);
 
     const handleAccountsChanged = async (newAccounts) => {
+
+      initWeb3();
+      return;
       // Time to reload your interface with accounts[0]!
       let isConnected = newAccounts.length ? true : false;
       console.log('Inside accountsChanged, isConnected', isConnected);
@@ -311,6 +314,7 @@ function App() {
           <Route path="/contests/:id" exact caseSensitive={false} element={<ContestDetails />} />
           <Route path="/contests" exact caseSensitive={false} element={<Contests />} />
           <Route path="/contestants" exact caseSensitive={false} element={<Contestants />} />
+          <Route path="/credits" exact caseSensitive={false} element={<Credits />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 

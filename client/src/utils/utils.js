@@ -44,9 +44,10 @@ export const getChainConfig = (chainId) => {
 export const getRandomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
-export const getRandomThumbnail = (min, max) => {
-    const random = getRandomNumber(min, max);
-    return `/src/images/${random}.jpg`;
+export const getRandomThumbnail = (index) => {
+    //const random = getRandomNumber(min, max);
+    //index = (index == 0 || index == '0') ? 1 : index;
+    return `/src/assets/images/${index}.png`;
 }
 export const shortenAddress = (_addr) => {
     if (!_addr) {

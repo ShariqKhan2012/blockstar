@@ -97,6 +97,7 @@ contract Contest is Initializable {
 
     function disableParticipation() public isOwner isRunning {
         participationOpen = false;
+        votingOpen = true;
     }
 
     function openVoting() public isOwner isRunning {
@@ -128,24 +129,20 @@ contract Contest is Initializable {
 
         //if (currentRound < total_rounds - 1) {
         if (
-            (qualifiers[0].length <= 2) ||
-            (currentRound < qualifiers[0].length - 1)
+            (qualifiers[0].length > 2) &&
+            (currentRound < qualifiers[0].length - 2)
         ) {
             uint8 tmpCId = 0;
-            uint256 tmpLowestVotes = contestants[
-                qualifiers[currentRound][tmpCId]
-            ].votesReceived[currentRound];
+            //uint256 tmpLowestVotes = contestants[ qualifiers[currentRound][tmpCId] ].votesReceived[currentRound];
+            uint256 tmpLowestVotes = getContestantVotes(qualifiers[currentRound][tmpCId], currentRound);
 
             for (uint8 i = 1; i < qualifiers[currentRound].length; i++) {
                 //TODO: Right now, I haven't accounted for a scenario when 2 contestants
                 // have equal scores. So, using <= instead of < , for now
-                if (
-                    contestants[qualifiers[currentRound][i]].votesReceived[
-                        currentRound
-                    ] <= tmpLowestVotes
-                ) {
-                    tmpLowestVotes = contestants[qualifiers[currentRound][i]]
-                        .votesReceived[currentRound];
+                //if ( contestants[qualifiers[currentRound][i]].votesReceived[ currentRound ] <= tmpLowestVotes ) {
+                if ( getContestantVotes(qualifiers[currentRound][i], currentRound) <= tmpLowestVotes ) {
+                    //tmpLowestVotes = contestants[qualifiers[currentRound][i]] .votesReceived[currentRound];
+                    tmpLowestVotes = getContestantVotes(qualifiers[currentRound][i], currentRound);
                     tmpCId = i;
                 }
             }
@@ -153,7 +150,8 @@ contract Contest is Initializable {
             for (uint8 i = 0; i < qualifiers[currentRound].length; i++) {
                 //Skip the one with the lowest votes
                 if (i != tmpCId) {
-                    if (qualifiers[currentRound + 1].length == 0) {
+                    //if (qualifiers[currentRound + 1].length == 0) {
+                    if (qualifiers.length <= currentRound + 1) {
                         address[] memory a;
                         qualifiers.push(a);
                     }
@@ -188,14 +186,10 @@ contract Contest is Initializable {
             uint256 finalistOneFinalScore = 0;
             uint256 finalistTwoFinalScore = 0;
             for (uint8 i = 0; i < currentRound; i++) {
-                finalistOneFinalScore +=
-                    2 *
-                    i *
-                    contestants[qualifiers[currentRound][0]].votesReceived[i];
-                finalistTwoFinalScore +=
-                    2 *
-                    i *
-                    contestants[qualifiers[currentRound][1]].votesReceived[i];
+                //finalistOneFinalScore += 2 * i * contestants[qualifiers[currentRound][0]].votesReceived[i];
+                finalistOneFinalScore += 2 * i * getContestantVotes(qualifiers[currentRound][0], i);
+                //finalistTwoFinalScore += 2 * i * contestants[qualifiers[currentRound][1]].votesReceived[i];
+                finalistTwoFinalScore += 2 * i * getContestantVotes(qualifiers[currentRound][1], i);
             }
 
             if (finalistTwoFinalScore > finalistOneFinalScore) {
@@ -205,6 +199,15 @@ contract Contest is Initializable {
             }
         }
         state = ContestState.FINISHED;
+    }
+
+    function getContestantVotes(address _addr, uint8 roundNum) public view returns (uint256) {
+        if(contestants[_addr].votesReceived.length < roundNum + 1) {
+            return 0;
+        }
+        else {
+            return contestants[_addr].votesReceived[roundNum];
+        }
     }
 
     function uint2str(uint256 _i)
@@ -271,12 +274,12 @@ contract Contest is Initializable {
         }*/
     }
 
-    function submitPerformamce(string memory _performanceLink)
+    function submitPerformance(string memory _performanceLink)
         public
         payable
         isRunning
     {
-        require(participationOpen, "___PARTICIPATION_CLOSED___");
+        //require(participationOpen, "___PARTICIPATION_CLOSED___");
         //require( qualifiers[0].length < NUM_ALLOWED_PARTICIPANTS, "Maximum participants reached" );
         require(
             bytes(contestants[msg.sender].bio).length != 0,
@@ -313,7 +316,7 @@ contract Contest is Initializable {
         if (contestants[_addr].votesReceived.length != currentRound + 1) {
             contestants[_addr].votesReceived.push(0);
         }
-        contestants[_addr].votesReceived[currentRound] += 1;
+        contestants[_addr].votesReceived[currentRound] = getContestantVotes(_addr, currentRound) + 1;
     }
 
     function claimReward() public {
@@ -373,7 +376,10 @@ contract Contest is Initializable {
             contestants[_addr],
             owner,
             currentRound,
-            (votingOpen == false || state != ContestState.RUNNING)
+            (
+                votingOpen == false || state != ContestState.RUNNING || 
+                (contestants[msg.sender].progressedToRound < currentRound)
+            )
         );
     }
 }

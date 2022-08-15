@@ -35,5 +35,6 @@ export const errorMessages = {
     "ELIMINATED": "Contestant has been eliminated in previous rounds",
     "NO_SELF": "Can't vote for self",
     "NOT_FINISHED": "The contest has not finished yet",
-    "NOT_WINNER": "Only the winner can claim the reward"
+    "NOT_WINNER": "Only the winner can claim the reward",
+    "SUBMITTED": "Already submitted"
 }

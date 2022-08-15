@@ -159,10 +159,12 @@ const ContestDetails = () => {
         console.log('participate data 0 => ', nickname, nickname.length);
         nickname = web3.utils.padRight(nickname, 32);
         const performanceLink = data.performanceLink;
-        console.log('participate data => ', nickname, nickname.length);
+        console.log('participate nickname 1 => ', nickname, nickname.length);
+        console.log('participate nickname 2=> ', web3.utils.padLeft(data.nickname, 32), web3.utils.padLeft(data.nickname, 32).length);
         //return;
         try {
-            await contest.methods.participate("0x636f726c656f6e650000000000000000", performanceLink, data.bio).send({
+            //await contest.methods.participate("0x636f726c656f6e650000000000000000", performanceLink, data.bio).send({
+            await contest.methods.participate(nickname, performanceLink, data.bio).send({
                 from: accounts[0],
                 value: details[FEE_INDEX]
             })
@@ -180,16 +182,20 @@ const ContestDetails = () => {
     }
 
     const submitPerformance = async (data) => {
+        console.log(data)
         setLoading(false);
         try {
-            await contest.methods.submitPerformance(submitPerformamce).send({
+            await contest.methods.submitPerformamce(data.link).send({
                 from: accounts[0]
             })
             setMsg('Successfully submitted!!');
             setFetchDetails(true);
+            setNotifType('success');
         }
-        catch(e) {
+        catch (e) {
+            console.log(e);
             setMsg('Failed: ' + (e.message ? extractErrorCode(e.message) : 'An error occured'));
+            setNotifType('error');
         }
         setToastVisible(true);
     }
@@ -229,6 +235,19 @@ const ContestDetails = () => {
         return found;
     }
 
+    const hasQualified = (addr, roundNum) => {
+        //return details[QUALIFIERS_INDEX][roundNum].includes(addr);
+        
+        //if (details[QUALIFIERS_INDEX].length < roundNum + 1) {
+        if (!details[QUALIFIERS_INDEX][roundNum]) {
+            return false;
+        }
+        const allContestants = details[QUALIFIERS_INDEX][roundNum];
+        const found = (addr ? (allContestants.find(key => key.toLowerCase() === addr.toLowerCase()) != undefined) : false);
+        console.log('found =>', found, addr, accounts[0])
+        return found;
+    }
+
     /*if (loading) {
         return (
             <Loader show={true} />
@@ -263,7 +282,7 @@ const ContestDetails = () => {
              * 2. Participation has been closed once
              */
             participationControl = <Switch value={details[PARTICIPATION_OPEN_INDEX]} onToggle={toggleParticipation} disabled={parseInt(details[STATE_INDEX]) != STATUS_RUNNING || (details[PARTICIPATION_OPEN_INDEX] == false)} onLabel="Open" offLabel="Closed" />;
-            
+
             /*
              * Voting Button. 
              * Should be disabled if:
@@ -326,22 +345,31 @@ const ContestDetails = () => {
         else {
             if (currentRound == 0) {
                 return (
-                    <div className="mt-8 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                    <div className="mt-12 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                         <p>Congratulations! You have successfully taken part in the contest. <br /> <br />Please wait for the results of the voting for this round</p>
                     </div>
                 )
             }
-            else if (details[VOTING_OPEN_INDEX] == true) {
-                return (
-                    <div className="mt-8 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
-                        <p>Please wait for the results of the voting for this round</p>
-                    </div>
-                )
+            else if (hasQualified(accounts[0], currentRound)) {
+                if (details[VOTING_OPEN_INDEX] == true) {
+                    return (
+                        <div className="mt-12 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                            <p>Please wait for the results of the voting for this round</p>
+                        </div>
+                    )
+                }
+                else {
+                    return (
+                        <div className="mt-12 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                            <SubmitPerformanceForm onSubmit={submitPerformance} />
+                        </div>
+                    )
+                }
             }
-            else {
+            else { //Not qualified
                 return (
-                    <div className="mt-8 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
-                        <SubmitPerformanceForm onSubmit={submitPerformance}/>
+                    <div className="mt-12 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                        <p>Sorry! You have not been able to progress to this round.</p>
                     </div>
                 )
             }
@@ -387,7 +415,7 @@ const ContestDetails = () => {
                                     </div>
                                     <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-yellow-500">Current Round</h2>
-                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{details[CURRENT_ROUND_INDEX]}</p>
+                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{details[CURRENT_ROUND_INDEX] ?? 'Audition'}</p>
                                     </div>
                                     <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-green-500">Winner</h2>
@@ -411,8 +439,8 @@ const ContestDetails = () => {
                                                  * Disable vote button for self and for admins. 
                                                  * Also, if voting is disabled, or the projet is not running
                                                  */
-                                                const voteDisabled = (accounts[0] ? (compareStr(c, accounts[0]) || compareStr(details[OWNER_INDEX], accounts[0]) ||
-                                                    details[VOTING_OPEN_INDEX] == false || details[STATE_INDEX] != STATUS_RUNNING) : false);
+                                                const voteDisabled = (accounts[0] ? (!hasQualified(c, details[CURRENT_ROUND_INDEX]) || compareStr(c, accounts[0]) || compareStr(details[OWNER_INDEX], accounts[0]) ||
+                                                    details[VOTING_OPEN_INDEX] == false || details[STATE_INDEX] != STATUS_RUNNING) : true);
                                                 return (
                                                     <Contestant key={c} address={c} contest={address} onVote={e => vote(c)} voteDisabled={voteDisabled} />
                                                 )
