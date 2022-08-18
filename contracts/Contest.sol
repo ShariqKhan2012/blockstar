@@ -48,6 +48,9 @@ contract Contest is Initializable {
     // Voting closed for a round
     event VotingClosed(uint8 round);
 
+    // Winner picked
+    event WinnerPicked(address _addr1, uint256 _votes1, address _addr2, uint256 _votes2, address _winner);
+
     function initialize(
         address _owner,
         string memory _title,
@@ -97,7 +100,8 @@ contract Contest is Initializable {
 
     function disableParticipation() public isOwner isRunning {
         participationOpen = false;
-        votingOpen = true;
+        //votingOpen = true;
+        openVoting();
     }
 
     function openVoting() public isOwner isRunning {
@@ -185,18 +189,19 @@ contract Contest is Initializable {
         } else {
             uint256 finalistOneFinalScore = 0;
             uint256 finalistTwoFinalScore = 0;
-            for (uint8 i = 0; i < currentRound; i++) {
+            for (uint8 i = 0; i <= currentRound; i++) {
                 //finalistOneFinalScore += 2 * i * contestants[qualifiers[currentRound][0]].votesReceived[i];
-                finalistOneFinalScore += 2 * i * getContestantVotes(qualifiers[currentRound][0], i);
+                finalistOneFinalScore += 2 * (i + 1) * getContestantVotes(qualifiers[currentRound][0], i);
                 //finalistTwoFinalScore += 2 * i * contestants[qualifiers[currentRound][1]].votesReceived[i];
-                finalistTwoFinalScore += 2 * i * getContestantVotes(qualifiers[currentRound][1], i);
+                finalistTwoFinalScore += 2 * (i + 1)* getContestantVotes(qualifiers[currentRound][1], i);
             }
 
             if (finalistTwoFinalScore > finalistOneFinalScore) {
-                winner = payable(qualifiers[2][1]);
+                winner = payable(qualifiers[currentRound][1]);
             } else {
-                winner = payable(qualifiers[2][0]);
+                winner = payable(qualifiers[currentRound][0]);
             }
+            emit WinnerPicked(qualifiers[currentRound][0], finalistOneFinalScore, qualifiers[currentRound][1], finalistTwoFinalScore, winner);
         }
         state = ContestState.FINISHED;
     }
@@ -204,9 +209,11 @@ contract Contest is Initializable {
     function getContestantVotes(address _addr, uint8 roundNum) public view returns (uint256) {
         if(contestants[_addr].votesReceived.length < roundNum + 1) {
             return 0;
+            //return 11;
         }
         else {
             return contestants[_addr].votesReceived[roundNum];
+            //return 7;
         }
     }
 
