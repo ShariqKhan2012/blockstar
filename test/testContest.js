@@ -143,324 +143,99 @@ contract("Test full lifecycle", accounts => {
     contestFactory = await ContestFactoryContract.new();
   })
 
-  /*
-  it("Works okay with just 1 participant", async () => {
-    await contestFactory.createClone(contestTitle, contestDesc, feeInWei);
-    const contests = await contestFactory.getContests();
-    const contest = await ContestContract.at(contests[0].addr);
+  for (n = 1; n <= 4; n++) {
+    it(`Works okay with N = ${n} participants`, async () => {
+      await contestFactory.createClone(contestTitle, contestDesc, feeInWei);
+      const contests = await contestFactory.getContests();
+      const contest = await ContestContract.at(contests[0].addr);
 
-    //Participate
-    try {
-      await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-        from: accounts[1],
-        value: feeInWei,
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false);
-    }
+      //const numContestants = n;
 
-    //Disable Participation
-    try {
-      await contest.disableParticipation({
-        from: accounts[0]
-      })
-      const winner = await contest.winner();
-      console.log('Accounts and winner are =>', accounts, winner);
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false)
-    }
-  })
-  */
-
-  /*
-  it("Works okay with just 2 participants", async () => {
-    await contestFactory.createClone(contestTitle, contestDesc, feeInWei);
-    const contests = await contestFactory.getContests();
-    const contest = await ContestContract.at(contests[0].addr);
-
-
-    //1st Participant
-    try {
-      await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-        from: accounts[1],
-        value: feeInWei,
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      console.log("Caught =>", e)
-      assert.ok(false);
-    }
-
-    //2st Participant
-    try {
-      await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-        from: accounts[2],
-        value: feeInWei,
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false);
-    }
-
-    //Disable Participation
-    try {
-      await contest.disableParticipation({
-        from: accounts[0]
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false)
-    }
-
-    //Start Voting
-    for (j = 1; j < 4; j++) {
-      const id = (j < 3) ? 1 : 2;
-      try {
-        await contest.vote(accounts[id], {
-          from: accounts[9]
-        })
-        assert.ok(true);
-      }
-      catch (e) {
-        console.log('Caught =>', e)
-        assert.ok(false)
-      }
-    }
-
-    //Close Voting
-    try {
-      await contest.closeVoting({
-        from: accounts[0]
-      })
-      const winner = await contest.winner();
-      console.log('Accounts and winners are =>', accounts, winner);
-      assert.ok(true);
-    }
-    catch (e) {
-      console.log('Caught =>', e)
-      assert.ok(false)
-    }
-
-  })
-  */
-
-  /*
-  it("Works okay with just 3 participants", async () => {
-    await contestFactory.createClone(contestTitle, contestDesc, feeInWei);
-    const contests = await contestFactory.getContests();
-    const contest = await ContestContract.at(contests[0].addr);
-
-
-    //1st Participant
-    try {
-      await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-        from: accounts[1],
-        value: feeInWei,
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      console.log("Caught =>", e)
-      assert.ok(false);
-    }
-
-    //2st Participant
-    try {
-      await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-        from: accounts[2],
-        value: feeInWei,
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false);
-    }
-
-    //3rd Participant
-    try {
-      await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-        from: accounts[3],
-        value: feeInWei,
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false);
-    }
-
-    //Disable Participation
-    try {
-      await contest.disableParticipation({
-        from: accounts[0]
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false)
-    }
-
-    let details = await contest.getContestDetails();
-    let qualifiers = details[9];
-    console.log('Audition qualifiers =>', qualifiers);
-    for (i = 0; i < qualifiers[0].length - 1; i++) {
-      //Open Voting
-      console.log(`Enabling voting for round ${i}`);
-      try {
-        await contest.openVoting({
-          from: accounts[0]
-        })
-        assert.ok(true);
-      }
-      catch (e) {
-        console.log('Caught =>', e)
-        assert.ok(false)
-      }
-
-      //Cast Votes for audition round
-      let currentRound = await contest.currentRound();
-      console.log(`Casting votes for round ${i}`);
-      for (j = 0; j < qualifiers[currentRound].length; j++) {
-        for (k = 0; k < 2 * (j + 1); k++) {
-          try {
-            await contest.vote(qualifiers[currentRound][j], {
-              from: accounts[9]
-            })
-            assert.ok(true);
-          }
-          catch (e) {
-            console.log('Caught =>', e)
-            assert.ok(false)
-          }
+      //1st Participant
+      for (count = 1; count <= n; count++) {
+        try {
+          await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
+            from: accounts[count],
+            value: feeInWei,
+          })
+          assert.ok(true);
+        }
+        catch (e) {
+          console.log("Caught in participate  =>", e)
+          assert.ok(false);
         }
       }
 
-      //Close Voting
-      console.log(`Closing voting for round ${i}`);
+
+      //Disable Participation
       try {
-        await contest.closeVoting({
-          from: accounts[0]
-        })
-        details = await contest.getContestDetails();
-        qualifiers = details[9];
-        console.log(`Round ${i} qualifiers =>`, qualifiers);
-        assert.ok(true);
-      }
-      catch (e) {
-        console.log('Caught =>', e)
-        assert.ok(false)
-      }
-      console.log(`Voting closed for round ${i} and qualifers are`, qualifiers);
-      const d1 = await contest.getContestantDetails(qualifiers[currentRound][0]);
-      const d2 = await contest.getContestantDetails(qualifiers[currentRound][1]);
-
-      console.log(`After closing voting for round ${i}, details are : `, d1[0].votesReceived, d2[0].votesReceived);
-    }
-    const winner = await contest.winner();
-    console.log('Winner =>', winner)
-  })
-  */
-  
-for(n = 1; n <=7; n++ ) {
-  it(`Works okay with N = ${n} participants`, async () => {
-    await contestFactory.createClone(contestTitle, contestDesc, feeInWei);
-    const contests = await contestFactory.getContests();
-    const contest = await ContestContract.at(contests[0].addr);
-
-    //const numContestants = n;
-
-    //1st Participant
-    for (count = 1; count <= n; count++) {
-      try {
-        await contest.participate(web3.utils.padRight(web3.utils.asciiToHex(contestantName), 32), contestantDesc, videoId, {
-          from: accounts[count],
-          value: feeInWei,
-        })
-        assert.ok(true);
-      }
-      catch (e) {
-        console.log("Caught =>", e)
-        assert.ok(false);
-      }
-    }
-
-
-    //Disable Participation
-    try {
-      await contest.disableParticipation({
-        from: accounts[0]
-      })
-      assert.ok(true);
-    }
-    catch (e) {
-      assert.ok(false)
-    }
-
-    let details = await contest.getContestDetails();
-    let qualifiers = details[9];
-    console.log('Audition qualifiers =>', qualifiers);
-    for (i = 0; i < qualifiers[0].length - 1; i++) {
-      //Open Voting
-      console.log(`Enabling voting for round ${i}`);
-      try {
-        await contest.openVoting({
+        await contest.disableParticipation({
           from: accounts[0]
         })
         assert.ok(true);
       }
       catch (e) {
-        console.log('Caught =>', e)
+        console.log("Caught in disableParticipation  =>", e);
         assert.ok(false)
       }
 
-      //Cast Votes for audition round
-      let currentRound = await contest.currentRound();
-      console.log(`Casting votes for round ${i}`);
-      for (j = 0; j < qualifiers[currentRound].length; j++) {
-        for (k = 0; k < 2 * (j + 1); k++) {
-          try {
-            await contest.vote(qualifiers[currentRound][j], {
-              from: accounts[9]
-            })
-            assert.ok(true);
-          }
-          catch (e) {
-            console.log('Caught =>', e)
-            assert.ok(false)
+      let details = await contest.getContestDetails();
+      let qualifiers = details[9];
+
+      for (i = 0; i < qualifiers[0].length - 1; i++) {
+        //Open Voting
+        console.log(`Enabling voting for round ${i}`);
+        try {
+          await contest.openVoting({
+            from: accounts[0]
+          })
+          assert.ok(true);
+        }
+        catch (e) {
+          console.log("Caught in openVoting  =>", e);
+          assert.ok(false)
+        }
+
+        //Cast Votes for audition round
+        let currentRound = await contest.currentRound();
+        console.log(`Casting votes for round ${i}`);
+        for (j = 0; j < qualifiers[currentRound].length; j++) {
+          for (k = 0; k < (j + 1); k++) {
+            try {
+              await contest.vote(qualifiers[currentRound][j], {
+                from: accounts[9]
+              })
+              assert.ok(true);
+            }
+            catch (e) {
+              console.log("Caught in vote  =>", e);
+              assert.ok(false)
+            }
           }
         }
-      }
 
-      //Close Voting
-      console.log(`Closing voting for round ${i}`);
-      try {
-        await contest.closeVoting({
-          from: accounts[0]
-        })
-        details = await contest.getContestDetails();
-        qualifiers = details[9];
-        console.log(`Round ${i} qualifiers =>`, qualifiers);
-        assert.ok(true);
+        //Close Voting
+        console.log(`Closing voting for round ${i}`);
+        try {
+          await contest.closeVoting({
+            from: accounts[0]
+          })
+          details = await contest.getContestDetails();
+          qualifiers = details[9];
+          assert.ok(true);
+        }
+        catch (e) {
+          console.log('Caught =>', e)
+          assert.ok(false)
+        }
       }
-      catch (e) {
-        console.log('Caught =>', e)
-        assert.ok(false)
-      }
-      console.log(`Voting closed for round ${i} and qualifers are`, qualifiers);
+      let currentRound = await contest.currentRound();
       const d1 = await contest.getContestantDetails(qualifiers[currentRound][0]);
       const d2 = await contest.getContestantDetails(qualifiers[currentRound][1]);
 
-      console.log(`After closing voting for round ${i}, details are : `, d1[0].votesReceived, d2[0].votesReceived);
-    }
-    const winner = await contest.winner();
-    console.log('Winner =>', winner)
-
-  })
-}
+      console.log(`After final round => ${i}, qualifiers and finalists votes are : `, qualifiers, d1[0].votesReceived, d2[0].votesReceived);
+      const winner = await contest.winner();
+      console.log('Winner =>', winner)
+    })
+  }
 })
