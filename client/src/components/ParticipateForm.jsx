@@ -11,7 +11,6 @@ const ParticipateForm = (props) => {
     };
 
     const onFormSubmit = async (data) => {
-        console.log('data => ', data);
         props.onSubmit(data);
     }
 
@@ -44,7 +43,6 @@ const ParticipateForm = (props) => {
             </div>
 
             <div className="sm:col-span-2">
-                {/*<button className="bg-[#00c9b7] hover:bg-[#36b1a0] py-2 px-6  inline-block mx-auto  rounded-lg text-white text-center">Submit</button>*/}
                 <Button type="secondary" label="Submit" />
             </div>
         </form>

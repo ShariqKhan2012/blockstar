@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import Web3Context from "../store/web3-context";
+import Web3Context from "@/store/web3-context";
 import Button from "./Button";
 import Toast from './Toast';
 import Popper from './Popper';
@@ -26,19 +26,14 @@ const ConnnectWalletButton = () => {
     }
 
     const connectWallet = async () => {
-        console.log('Inside connectWallet');
         setToastVisible(false);
         if (walletConnected && getAppChainId() == web3Ctxt.walletChainId) {
             //do nothing and return
-            console.log('Everything Okay. Do Nothing');
             return;
         }
         try {
             const _accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            console.log('_accounts', _accounts);
             setAccounts(_accounts);
-            console.log('_accounts Done', _accounts);
-
 
             try {
                 //Connected successfully, now try to switch to the appropriate network
@@ -81,11 +76,8 @@ const ConnnectWalletButton = () => {
                 // User rejected request
                 console.log("User rejected the request to connect the wallet");
                 setMsg("User rejected the request to connect the wallet");
-                console.log(111);
                 setNotifType('error');
-                console.log(222);
                 setToastVisible(true);
-                console.log(333);
             }
             else {
                 console.log("Failed to connect to the wallet");
@@ -105,10 +97,21 @@ const ConnnectWalletButton = () => {
             setInfoText(<small >Your wallet is not connected to the site</small>)
         }
         else if (walletConnected && getAppChainId() == web3Ctxt.walletChainId) {
-            setInfoText(<small >Connected to <span className="font-semibold text-center">{shortenAddress(accounts[0])}</span></small>)
+            setInfoText(
+                <p className='text-left'>
+                    <small >A/c: <span className="font-semibold">{shortenAddress(accounts[0])}</span></small><br />
+                    <small >N/w: <span className="font-semibold">{getNetworkName(web3Ctxt.walletChainId)}</span></small><br />
+                </p>
+            )
         }
         else {
-            setInfoText(<small >Connected to <span className="font-semibold text-center">{shortenAddress(accounts[0])}</span></small>)
+            setInfoText(
+                <p className='text-left'>
+                    <small >A/c: <span className="font-semibold">{shortenAddress(accounts[0])}</span></small><br />
+                    <small >N/w: <span className="font-semibold">{getNetworkName(web3Ctxt.walletChainId)}</span></small><br />
+                    <small className="text-orange-500">Please switch the MM network to <span className="font-bold">{getNetworkName(getAppChainId())}</span></small>
+                </p>
+            )
         }
         setShowInfo(true);
     }

@@ -1,4 +1,4 @@
-import FullWidthLayout from '../layouts/FullWidth';
+import FullWidthLayout from '@/layouts/FullWidth';
 
 const NotFound = () => {
     return (

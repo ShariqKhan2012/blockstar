@@ -1,7 +1,9 @@
 import { useParams, NavLink } from 'react-router-dom';
-import TestimonialCard from '../components/TestimonialCard';
-import FullWidthLayout from '../layouts/FullWidth';
-//import img from '../src/1.jpg'
+import TestimonialCard from '@/components/TestimonialCard';
+import FullWidthLayout from '@/layouts/FullWidth';
+//import img from '@/src/1.jpg'
+
+const rootUrl = import.meta.env.BASE_URL;
 
 const ContestantDetails = () => {
     const params = useParams();
@@ -25,7 +27,7 @@ const ContestantDetails = () => {
                             </div>
                         </div>
                         <div className="order-1 md:order-2">
-                            <img className="rounded-lg" src={`/src/assets/images/hero.png`} alt="avatar" />
+                            <img className="rounded-lg mx-auto w-full" src={`/hero.png`} alt="avatar" />
                         </div>
                     </div>
                 </section>
@@ -76,12 +78,11 @@ const ContestantDetails = () => {
                 <section className="bg-white max-w-7xl mx-auto px-4 py-24">
                     <h1 className="text-#333 text-3xl font-bold text-center">What The Community Says</h1>
                     <div className="grid grid-cols-3 gap-y-16 gap-x-[80px] mt-16">
-                        <TestimonialCard name="John Doe" avatarUrl="/src/images/1.jpg" />
-                        <TestimonialCard name="Jane Doe" avatarUrl="/src/images/2.jpg" />
-                        <TestimonialCard name="Jack Doe" avatarUrl="/src/images/3.jpg" />
+                        <TestimonialCard name="John Doe" avatarUrl={rootUrl + "t1.jpg"} />
+                        <TestimonialCard name="Jane Doe" avatarUrl={rootUrl + "t2.jpg"} />
+                        <TestimonialCard name="Jack Doe" avatarUrl={rootUrl + "t3.jpg"} />
                     </div>
                 </section>
-
             </div>
         </FullWidthLayout>
     )

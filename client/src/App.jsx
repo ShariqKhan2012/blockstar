@@ -1,11 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { Navbar, Footer } from './components';
 import Dialog from './components/Dialog';
-import { Home, Contests, NewContest, ContestDetails, Contestants, ContestantDetails, Credits, NotFound } from './views';
+import Loader from './components/Loader';
+//import { Home, Contests, NewContest, ContestDetails, ContestantDetails, Credits, NotFound } from './views';
+const Home = lazy(() => import("./views/Home"));
+const Contests = lazy(() => import("./views/Contests"));
+const NewContest = lazy(() => import("./views/NewContest"));
+const ContestDetails = lazy(() => import("./views/ContestDetails"));
+const ContestantDetails = lazy(() => import("./views/ContestantDetails"));
+const Credits = lazy(() => import("./views/Credits"));
+const NotFound = lazy(() => import("./views/NotFound"));
+
 import getWeb3 from "./getWeb3";
+import { getAppChainId, getAppNetworkId } from './utils/utils';
 import Web3Context from './store/web3-context';
-import ContestCloneFactory from "../../build/contracts/ContestCloneFactory.json";
+import ContestCloneFactory from "@/../../build/contracts/ContestCloneFactory.json";
 //require ('dotenv').config({path: '../.env'});
 import './App.css';
 
@@ -33,9 +43,12 @@ function App() {
       console.log('walletChainId =>', walletChainId);
 
       //const networkId = await web3Instancewwwwwwwwwwwwwwwww.eth.net.getId();
-      const networkId = '5777';
+      //const networkId = '5777';
+      const networkId = _web3.utils.toDecimal(getAppNetworkId()).toFixed();
       console.log('networkID =>', networkId);
-      const deployedNetwork = ContestCloneFactory.networks[networkId];
+      //const deployedNetwork = ContestCloneFactory.networks[networkId];
+      const deployedNetwork = ContestCloneFactory.networks[networkId.toString()];
+      console.log('deployedNetwork =>', deployedNetwork);
       const _factory = new _web3.eth.Contract(
         ContestCloneFactory.abi,
         deployedNetwork && deployedNetwork.address,
@@ -238,14 +251,14 @@ function App() {
       let isConnected = newAccounts.length ? true : false;
       console.log('Inside accountsChanged, isConnected', isConnected);
       console.log('Inside accountsChanged, newAccounts', newAccounts);
-      
+
       const permissions = await window.ethereum.request({ method: 'wallet_getPermissions' });
       console.log('Inside accountsChanged, permissions => ', permissions);
       const isUnlocked = await window?.ethereum?._metamask.isUnlocked();
-      
+
       console.log('Inside accountsChanged, walletInstalled', walletInstalled);
       console.log('Inside accountsChanged, isUnlocked', isUnlocked);
-      
+
       const _walletConnected = Boolean(walletInstalled && isUnlocked && newAccounts.length > 0 && permissions.length > 0);
       console.log('Inside accountsChanged, _walletConnected', _walletConnected);
 
@@ -307,16 +320,17 @@ function App() {
         //onCancel={() => alert(456)}
         //cancelLabel="No"
         />
-        <Routes>
-          <Route path="/" exact caseSensitive={false} element={<Home />} />
-          <Route path="/contests/new" exact caseSensitive={false} element={<NewContest />} />
-          <Route path="/contests/:id/:cId" exact caseSensitive={false} element={<ContestantDetails />} />
-          <Route path="/contests/:id" exact caseSensitive={false} element={<ContestDetails />} />
-          <Route path="/contests" exact caseSensitive={false} element={<Contests />} />
-          <Route path="/contestants" exact caseSensitive={false} element={<Contestants />} />
-          <Route path="/credits" exact caseSensitive={false} element={<Credits />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<Loader show={true} />} >
+          <Routes>
+            <Route path="/" exact caseSensitive={false} element={<Home />} />
+            <Route path="/contests/new" exact caseSensitive={false} element={<NewContest />} />
+            <Route path="/contests/:id/:cId" exact caseSensitive={false} element={<ContestantDetails />} />
+            <Route path="/contests/:id" exact caseSensitive={false} element={<ContestDetails />} />
+            <Route path="/contests" exact caseSensitive={false} element={<Contests />} />
+            <Route path="/credits" exact caseSensitive={false} element={<Credits />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
 
         <Footer />
       </div>

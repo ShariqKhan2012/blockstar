@@ -27,6 +27,7 @@ contract ContestCloneFactory {
         string memory _description,
         uint256 _fee
     ) external returns (address) {
+        require(_fee >= 0.0001 ether, "___MIN_FEE___");
         address clone = Clones.clone(implementation);
         Contest(clone).initialize(
             msg.sender,

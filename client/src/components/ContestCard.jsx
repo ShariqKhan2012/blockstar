@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { shortenAddress } from '../utils/utils';
+import { shortenAddress } from '@/utils/utils';
 
 const ContestCard = ({ title, addr, thumbnailUrl }) => {
     return (

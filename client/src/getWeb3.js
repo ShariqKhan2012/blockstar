@@ -7,9 +7,7 @@ const fetchWeb3 = () => {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener("load", async () => {
       // Modern dapp browsers...
-      console.log('0000');
       if (window.ethereum) {
-        console.log(1111);
         const web3 = new Web3(window.ethereum);
         try {
           console.log("Modern web3 detected.");
@@ -24,7 +22,6 @@ const fetchWeb3 = () => {
       }
       // Legacy dapp browsers...
       else if (window.web3) {
-        console.log(2222);
         // Use Mist/MetaMask's provider.
         const web3 = window.web3;
         console.log("Injected web3 detected.");
@@ -32,7 +29,6 @@ const fetchWeb3 = () => {
       }
       // Fallback to localhost; use dev console port by default...
       else {
-        console.log(3333);
         const provider = new Web3.providers.HttpProvider(
           "http://127.0.0.1:7545"
         );

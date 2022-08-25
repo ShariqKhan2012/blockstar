@@ -1,12 +1,12 @@
 import { useState, useContext } from 'react';
 import { useForm } from 'react-hook-form';
-import Button from '../components/Button';
-import Message from '../components/Message';
-import Loader from '../components/Loader';
-import Toast from '../components/Toast';
-import ContainedLayout from '../layouts/Contained';
-import Web3Context from '../store/web3-context';
-import { getAppChainId, getNetworkName } from '../utils/utils';
+import Button from '@/components/Button';
+import Message from '@/components/Message';
+import Loader from '@/components/Loader';
+import Toast from '@/components/Toast';
+import ContainedLayout from '@/layouts/Contained';
+import Web3Context from '@/store/web3-context';
+import { getAppChainId, getNetworkName } from '@/utils/utils';
 
 const NewContest = () => {
     const [loading, setLoading] = useState(false);
@@ -156,7 +156,8 @@ const NewContest = () => {
                         </small>
                     </div>
                     <div className="mb-6">
-                        <input name="fee" {...register('fee', registerOptions.fee)} className="p-3 w-full  border border-slate-300 rounded-md focus:outline-none" type="number" min="0.00001" step="0.00001" placeholder="Participating fee (in Ethers)" />
+                        <input name="fee" {...register('fee', registerOptions.fee)} className="p-3 w-full  border border-slate-300 rounded-md focus:outline-none" type="number" min="0.0001" step="0.0001" placeholder="Participating fee (in Ethers)" />
+                        <small><em>Min fee = 0.0001 Ether</em></small>
                         <small className="text-[#f00]">
                             {errors?.fee && errors.fee.message}
                         </small>

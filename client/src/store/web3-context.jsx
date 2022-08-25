@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
-import getWeb3 from "../getWeb3";
-import ContestCloneFactory from "../../../build/contracts/ContestCloneFactory.json";
+import getWeb3 from "@/getWeb3";
+import ContestCloneFactory from "@/../../build/contracts/ContestCloneFactory.json";
 
 const Web3Context = createContext({
   /*web3: undefined,
@@ -25,8 +25,6 @@ export const Web3ContextProvider = (props) => {
   const [walletConnected, setWalletConnected] = useState(false);
 
   useEffect(() => {
-    console.log('Inside useEffect');
-
     if (web3 === undefined) {
       initWeb3();
     }
@@ -58,14 +56,9 @@ export const Web3ContextProvider = (props) => {
 
   const initWeb3 = () => {
     try {
-      console.log('Entering initWeb3');
       // Get network provider and web3 instance.
       const web3Instance = getWeb3();
       setWeb3(web3Instance);
-      console.log('Inside initWeb3 web3Instance =>', web3Instance);
-      //console.log('Inside initWeb3 web3  =>', web3);
-
-      
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
@@ -84,12 +77,10 @@ export const Web3ContextProvider = (props) => {
   const initFactory = async () => {
     console.log('Env =>', import.meta.env);
     // Get the contract instance.
-    console.log('web3 inside initFactory =>', web3);
     const chainId = await web3.eth.getChainId();
     console.log('chainId =>', chainId);
     //const networkId = await web3.eth.net.getId();
     const networkId = '5777';
-    console.log('networkID =>', networkId);
     const deployedNetwork = ContestCloneFactory.networks[networkId];
     const instance = new web3.eth.Contract(
       ContestCloneFactory.abi,

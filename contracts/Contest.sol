@@ -8,12 +8,13 @@ contract Contest is Initializable {
     string public title;
     string public description;
 
-    uint8 public constant NUM_ALLOWED_PARTICIPANTS = 4;
+    //uint8 public constant NUM_ALLOWED_PARTICIPANTS = 4;
     uint256 public fee;
     uint8 public currentRound;
 
     bool public votingOpen;
     bool public participationOpen;
+    bool public rewardClaimed;
 
     enum ContestState {
         RUNNING,
@@ -33,14 +34,6 @@ contract Contest is Initializable {
     //address[][NUM_ALLOWED_PARTICIPANTS] public qualifiers;
     address[][] public qualifiers;
 
-    // Fired to signal that the contest is open for participation
-    event ContestOpenedForParticipation();
-
-    /*
-     * Fired once the number of participants = 4.
-     * Signals that the contest is closed for participation
-     */
-    event ContestClosedForParticipation(address indexed _addr);
 
     // Voting opened for a round
     event VotingOpened(uint8 round);
@@ -121,7 +114,7 @@ contract Contest is Initializable {
         votingOpen = false;
 
         /*
-         * Max. Rounds = NUM_ALLOWED_PARTICIPANTS - 1
+         * Max. Rounds = NUM_PARTICIPANTS - 1
          * So, for 4 participants, max rounds = 3 => R0, R1, R2
          * So, we count votes of the current round and eliminate
          * the person with the lowest votes.
@@ -132,13 +125,10 @@ contract Contest is Initializable {
         //uint8 total_rounds = NUM_ALLOWED_PARTICIPANTS - 1;
 
         //if (currentRound < total_rounds - 1) {
-        if (
-            (qualifiers[0].length > 2) &&
-            (currentRound < qualifiers[0].length - 2)
-        ) {
-            uint8 tmpCId = 0;
-            //uint256 tmpLowestVotes = contestants[ qualifiers[currentRound][tmpCId] ].votesReceived[currentRound];
-            uint256 tmpLowestVotes = getContestantVotes(qualifiers[currentRound][tmpCId], currentRound);
+        if ( (qualifiers[0].length > 2) && (currentRound < qualifiers[0].length - 2) ) {
+            uint8 index = 0;
+            //uint256 tmpLowestVotes = contestants[ qualifiers[currentRound][index] ].votesReceived[currentRound];
+            uint256 tmpLowestVotes = getContestantVotes(qualifiers[currentRound][index], currentRound);
 
             for (uint8 i = 1; i < qualifiers[currentRound].length; i++) {
                 //TODO: Right now, I haven't accounted for a scenario when 2 contestants
@@ -147,13 +137,13 @@ contract Contest is Initializable {
                 if ( getContestantVotes(qualifiers[currentRound][i], currentRound) <= tmpLowestVotes ) {
                     //tmpLowestVotes = contestants[qualifiers[currentRound][i]] .votesReceived[currentRound];
                     tmpLowestVotes = getContestantVotes(qualifiers[currentRound][i], currentRound);
-                    tmpCId = i;
+                    index = i;
                 }
             }
 
             for (uint8 i = 0; i < qualifiers[currentRound].length; i++) {
                 //Skip the one with the lowest votes
-                if (i != tmpCId) {
+                if (i != index) {
                     //if (qualifiers[currentRound + 1].length == 0) {
                     if (qualifiers.length <= currentRound + 1) {
                         address[] memory a;
@@ -329,6 +319,7 @@ contract Contest is Initializable {
     function claimReward() public {
         require(state == ContestState.FINISHED, "___NOT_FINISHED___");
         require(msg.sender == winner, "___NOT_WINNER___");
+        rewardClaimed = true;
         winner.transfer(address(this).balance);
     }
 
@@ -344,14 +335,16 @@ contract Contest is Initializable {
             string memory,
             string memory,
             address,
-            uint8,
+            //uint8,
             uint256,
             uint256,
             bool,
             bool,
             //address[][NUM_ALLOWED_PARTICIPANTS] memory,
             address[][] memory,
-            ContestState
+            ContestState,
+            uint256,
+            bool
         )
     {
         return (
@@ -359,13 +352,16 @@ contract Contest is Initializable {
             title,
             description,
             winner,
-            NUM_ALLOWED_PARTICIPANTS,
+            //NUM_ALLOWED_PARTICIPANTS,
             fee,
             currentRound,
             participationOpen,
             votingOpen,
             qualifiers,
-            state
+            state,
+            //address(this).balance,
+            ((qualifiers.length == 0) ? 0 : fee * uint256(qualifiers[0].length)),
+            rewardClaimed
         );
     }
 
@@ -376,6 +372,9 @@ contract Contest is Initializable {
             Contestant memory,
             address,
             uint8,
+            bool,
+            address,
+            uint256,
             bool
         )
     {
@@ -385,8 +384,11 @@ contract Contest is Initializable {
             currentRound,
             (
                 votingOpen == false || state != ContestState.RUNNING || 
-                (contestants[msg.sender].progressedToRound < currentRound)
-            )
+                (contestants[_addr].progressedToRound < currentRound)
+            ),
+            winner,
+            ((qualifiers.length == 0) ? 0 : fee * uint256(qualifiers[0].length)),
+            rewardClaimed
         );
     }
 }

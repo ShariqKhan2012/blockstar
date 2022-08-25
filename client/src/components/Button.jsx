@@ -26,7 +26,7 @@ const Button = (props) => {
 
     if (props.disabled) {
         shadow = '';
-        border = 'border-[1px] border-gray-500';
+        //border = 'border-[1px] border-gray-500';
         bgColor = 'bg-gray-300';
         color = 'text-[#888]';
     }

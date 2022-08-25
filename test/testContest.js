@@ -1,6 +1,8 @@
 const ContestFactoryContract = artifacts.require('../contracts/ContestCloneFactory.sol');
 const ContestContract = artifacts.require('../contracts/Contest.sol');
 
+const NUM_CONTESTANTS = 5;
+
 const contestTitle = 'Indian Idol';
 const contestDesc = 'A singing contest';
 const feeInWei = 200000000000000;
@@ -138,12 +140,12 @@ contract("Participation tests", accounts => {
 
 })
 
-contract("Test full lifecycle", accounts => {
+contract(`Test full lifecycle for different number of contestants, starting from 1 to ${NUM_CONTESTANTS}`, accounts => {
   beforeEach(async () => {
     contestFactory = await ContestFactoryContract.new();
   })
 
-  for (n = 1; n <= 4; n++) {
+  for (n = 1; n <= NUM_CONTESTANTS; n++) {
     it(`Works okay with N = ${n} participants`, async () => {
       await contestFactory.createClone(contestTitle, contestDesc, feeInWei);
       const contests = await contestFactory.getContests();

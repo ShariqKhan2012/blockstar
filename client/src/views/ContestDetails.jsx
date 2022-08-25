@@ -1,18 +1,19 @@
 import { useContext, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Web3Context from '../store/web3-context';
-import ContestContract from "../../../build/contracts/Contest.json";
-import Loader from "../components/Loader";
-import Message from '../components/Message';
-import Switch from '../components/Switch';
-import ParticipateForm from '../components/ParticipateForm';
-import { extractErrorCode, getAppChainId, compareStr } from '../utils/utils';
-import { ZERO_ADDR } from '../utils/constants';
-import Toast from '../components/Toast';
-import Contestant from '../components/Contestant';
-import ContainedLayout from '../layouts/Contained';
-import SubmitPerformanceForm from '../components/SubmitPerformanceForm';
-//import img from '../src/1.jpg'
+import Web3Context from '@/store/web3-context';
+import ContestContract from "@/../../build/contracts/Contest.json";
+import Loader from "@/components/Loader";
+import Message from '@/components/Message';
+import Switch from '@/components/Switch';
+import ParticipateForm from '@/components/ParticipateForm';
+import { extractErrorCode, getAppChainId, compareStr } from '@/utils/utils';
+import { ZERO_ADDR } from '@/utils/constants';
+import Toast from '@/components/Toast';
+import Button from '@/components/Button';
+import Contestant from '@/components/Contestant';
+import ContainedLayout from '@/layouts/Contained';
+import SubmitPerformanceForm from '@/components/SubmitPerformanceForm';
+//import img from '@/src/1.jpg'
 
 const STATUS_RUNNING = 0;
 const STATUS_PAUSED = 1;
@@ -22,13 +23,15 @@ const OWNER_INDEX = 0;
 const TITLE_INDEX = 1;
 const DESCRIPTION_INDEX = 2;
 const WINNER_INDEX = 3;
-const MAX_PARTICIPANTS_INDEX = 4;
-const FEE_INDEX = 5;
-const CURRENT_ROUND_INDEX = 6;
-const PARTICIPATION_OPEN_INDEX = 7;
-const VOTING_OPEN_INDEX = 8;
-const QUALIFIERS_INDEX = 9;
-const STATE_INDEX = 10;
+//const MAX_PARTICIPANTS_INDEX = 4;
+const FEE_INDEX = 4;
+const CURRENT_ROUND_INDEX = 5;
+const PARTICIPATION_OPEN_INDEX = 6;
+const VOTING_OPEN_INDEX = 7;
+const QUALIFIERS_INDEX = 8;
+const STATE_INDEX = 9;
+const BALANCE_INDEX = 10;
+const CLAIMED_INDEX = 11;
 
 const ContestDetails = () => {
     const params = useParams();
@@ -185,10 +188,28 @@ const ContestDetails = () => {
         console.log(data)
         setLoading(false);
         try {
-            await contest.methods.submitPerformamce(data.link).send({
+            await contest.methods.submitPerformance(data.link).send({
                 from: accounts[0]
             })
             setMsg('Successfully submitted!!');
+            setFetchDetails(true);
+            setNotifType('success');
+        }
+        catch (e) {
+            console.log(e);
+            setMsg('Failed: ' + (e.message ? extractErrorCode(e.message) : 'An error occured'));
+            setNotifType('error');
+        }
+        setToastVisible(true);
+    }
+
+    const claimReward = async () => {
+        setLoading(false);
+        try {
+            await contest.methods.claimReward().send({
+                from: accounts[0]
+            })
+            setMsg('Successfully withdrawn!!');
             setFetchDetails(true);
             setNotifType('success');
         }
@@ -226,7 +247,6 @@ const ContestDetails = () => {
     }
 
     const isContestant = () => {
-        //console.log('isContestant => ', details[QUALIFIERS_INDEX], details);
         if (details[QUALIFIERS_INDEX].length == 0) {
             return false;
         }
@@ -235,16 +255,19 @@ const ContestDetails = () => {
         return found;
     }
 
+    const isWinner = (_addr) => {
+        return (_addr ? (details[WINNER_INDEX].toLowerCase() == _addr.toLowerCase()) : false);
+    }
+
     const hasQualified = (addr, roundNum) => {
         //return details[QUALIFIERS_INDEX][roundNum].includes(addr);
-        
+
         //if (details[QUALIFIERS_INDEX].length < roundNum + 1) {
         if (!details[QUALIFIERS_INDEX][roundNum]) {
             return false;
         }
         const allContestants = details[QUALIFIERS_INDEX][roundNum];
         const found = (addr ? (allContestants.find(key => key.toLowerCase() === addr.toLowerCase()) != undefined) : false);
-        console.log('found =>', found, addr, accounts[0])
         return found;
     }
 
@@ -272,8 +295,6 @@ const ContestDetails = () => {
 
     if (details != undefined) {
         if (walletConnected && (getAppChainId() == walletChainId) && (parseInt(details[STATE_INDEX]) != STATUS_FINISHED) && isAdmin()) {
-            console.log('Status control for admins')
-
             statusControl = <Switch value={parseInt(details[STATE_INDEX]) == STATUS_RUNNING} onToggle={toggleStatus} onLabel="Running" offLabel="Paused" />;
             /*
              * Participation Button
@@ -292,7 +313,6 @@ const ContestDetails = () => {
             votingControl = <Switch value={details[VOTING_OPEN_INDEX]} onToggle={toggleVoting} disabled={(parseInt(details[STATE_INDEX]) != STATUS_RUNNING) || details[PARTICIPATION_OPEN_INDEX]} onLabel="Open" offLabel="Closed" />;
         }
         else {
-            console.log('Status control for non-admins')
             if (details[STATE_INDEX] == STATUS_RUNNING) {
                 statusControl = 'Running';
             }
@@ -312,19 +332,36 @@ const ContestDetails = () => {
         if (isAdmin()) {
             return '';
         }
-        //If contest is not running, then dont show anything
-        if (details[STATE_INDEX] != STATUS_RUNNING) {
+
+        //Don't show anything if user is not logged in
+        if (!accounts[0]) {
             return '';
         }
+        //If contest is not running, then dont show anything
+        if (details[STATE_INDEX] != STATUS_RUNNING) {
+            if (details[STATE_INDEX] == STATUS_FINISHED && isContestant() && isWinner(accounts[0])) {
+                //const bal = web3.utils.fromWei((details[FEE_INDEX] * details[QUALIFIERS_INDEX][0].length).toString())
+                const bal = web3.utils.fromWei(details[BALANCE_INDEX], 'ether');
+                return (
+                    <div className="mt-12 rounded-xl p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
+                        <p>Congratulations! You have won the contest and the reward amount of <strong>{bal} Ether</strong> <br />
+                            <br />
+                            {
+                                details[CLAIMED_INDEX]
+                                    ?
+                                    <span>You have claimed your reward amount. </span>
+                                    :
+                                    <Button onClick={claimReward} label="Claim Reward" />
+                            }
+                        </p>
+                    </div>
+                )
+            }
+            else {
+                return '';
+            }
+        }
 
-        // If existing contestant 
-        //If round = 0, then "'You have already paticipated. Please wait for the results of the voting for this round.'""
-        //else 
-        //if already submitted performance lnk, "'You have already paticipated. Please wait for the results of the voting for this round.'""
-        //else show PerformanceForm
-        // else
-        //if currentround = 0, then show ParticipationForm
-        // else, show Voting Form
         const currentRound = details[CURRENT_ROUND_INDEX];
 
         if (!isContestant()) {
@@ -415,7 +452,7 @@ const ContestDetails = () => {
                                     </div>
                                     <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-yellow-500">Current Round</h2>
-                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{details[CURRENT_ROUND_INDEX] ?? 'Audition'}</p>
+                                        <p className="mt-2 text-xs text-[#444] md:text-sm font-regular leading-7">{parseInt(details[CURRENT_ROUND_INDEX]) == 0 ? 'Audition' : details[CURRENT_ROUND_INDEX]}</p>
                                     </div>
                                     <div className="rounded-lg p-3 md:p-6 bg-[#fafafa] border-[1px] border-[#ddd]">
                                         <h2 className="text-2xl font-bold text-green-500">Winner</h2>
@@ -442,7 +479,7 @@ const ContestDetails = () => {
                                                 const voteDisabled = (accounts[0] ? (!hasQualified(c, details[CURRENT_ROUND_INDEX]) || compareStr(c, accounts[0]) || compareStr(details[OWNER_INDEX], accounts[0]) ||
                                                     details[VOTING_OPEN_INDEX] == false || details[STATE_INDEX] != STATUS_RUNNING) : true);
                                                 return (
-                                                    <Contestant key={c} address={c} contest={address} onVote={e => vote(c)} voteDisabled={voteDisabled} />
+                                                    <Contestant key={c} address={c} isWinner={isWinner(c)} contest={address} onVote={e => vote(c)} voteDisabled={voteDisabled} />
                                                 )
                                             })}
                                         </div>
@@ -463,6 +500,9 @@ const ContestDetails = () => {
                                 </div>
                                 <div className="flex mt-4">
                                     <strong className="mr-2">Voting:</strong> {votingControl}
+                                </div>
+                                <div className="flex mt-4">
+                                    <strong className="mr-2">Balance:</strong> {web3.utils.fromWei(details[BALANCE_INDEX], 'ether')} Ether
                                 </div>
                             </div>
 

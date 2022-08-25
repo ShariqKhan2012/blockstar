@@ -1,5 +1,4 @@
-import {MAINNET, RINKEBY, GANACHE_UI, errorMessages} from './constants';
-
+import {MAINNET, RINKEBY, GANACHE_UI, GANACHE_UI_NETWORK, errorMessages} from './constants';
 
 export const getChainConfig = (chainId) => {
     console.log('getChainConfig chainId ', chainId)
@@ -47,7 +46,7 @@ export const getRandomNumber = (min, max) => {
 export const getRandomThumbnail = (index) => {
     //const random = getRandomNumber(min, max);
     //index = (index == 0 || index == '0') ? 1 : index;
-    return `/src/assets/images/${index}.png`;
+    return `/${index%7}.png`;
 }
 export const shortenAddress = (_addr) => {
     if (!_addr) {
@@ -61,18 +60,39 @@ export const shortenAddress = (_addr) => {
 //Gets the Chain ID of the network our pp is hosted on
 export const getAppChainId = () => {
     const env = import.meta.env;
-
+    console.log('env => ', env)
     //if dev && network == Ganache, then localhost
     //else Rinkeby
     if (env.MODE == 'development') {
-        if (env.network && env.network == 'Rinkeby') {
+        if (env.VITE_network && env.VITE_network == 'Rinkeby') {
             return RINKEBY;
         }
         else {
             return GANACHE_UI;
         }
     }
-    else if (env.network && env.network == 'Mainnet') { //return Rinkeby
+    else if (env.network && env.VITE_network == 'Mainnet') { //return Rinkeby
+        return MAINNET;
+    }
+    else {
+        return RINKEBY;
+    }
+}
+
+export const getAppNetworkId = () => {
+    const env = import.meta.env;
+    console.log('env => ', env)
+    //if dev && network == Ganache, then localhost
+    //else Rinkeby
+    if (env.MODE == 'development') {
+        if (env.VITE_network && env.VITE_network == 'Rinkeby') {
+            return RINKEBY;
+        }
+        else {
+            return GANACHE_UI_NETWORK;
+        }
+    }
+    else if (env.network && env.VITE_network == 'Mainnet') { //return Rinkeby
         return MAINNET;
     }
     else {
