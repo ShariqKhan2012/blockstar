@@ -44,9 +44,9 @@ export const getRandomNumber = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 export const getRandomThumbnail = (index) => {
-    //const random = getRandomNumber(min, max);
-    //index = (index == 0 || index == '0') ? 1 : index;
-    return `/${index%7}.png`;
+    //return `/${index%7}.png`;
+    const rootUrl = import.meta.env.BASE_URL;
+    return `${rootUrl}${index%7}.png`;
 }
 export const shortenAddress = (_addr) => {
     if (!_addr) {

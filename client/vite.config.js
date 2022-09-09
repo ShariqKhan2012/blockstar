@@ -7,7 +7,7 @@ import path, { resolve } from 'path'
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode, ssrBuild }) => {
   return {
-    base: mode == 'development' ? '/' : '/projects/',
+    base: mode == 'development' ? '/' : '/showcase/dappstar/',
     //base: '/projects/',
     plugins: [
       react(),

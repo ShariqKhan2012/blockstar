@@ -27,7 +27,7 @@ const ContestantDetails = () => {
                             </div>
                         </div>
                         <div className="order-1 md:order-2">
-                            <img className="rounded-lg mx-auto w-full" src={`/hero.png`} alt="avatar" />
+                            <img className="rounded-lg mx-auto w-full" src={rootUrl + "hero.png"} alt="avatar" />
                         </div>
                     </div>
                 </section>
