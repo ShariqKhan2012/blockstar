@@ -15,7 +15,7 @@ const Contestant = (props) => {
             </div>
             {/*<div className="bg-[#9106cd] absolute -top-3 left-2 px-6 py-1 rounded-sm shadow-xl w-[150px] text-white text-sm text-center">Winner</div>
             <div className=" bg-[#9106cd] origin-top float-right  mr-0 shadow-xl text-white text-xs2 absolute top-5 right-5 w-72 text-center translate-x-[50%] rotate-[45deg]" >
-                <div class="">WINNER</div>
+                <div className="">WINNER</div>
     </div>*/}
 
             {/*}

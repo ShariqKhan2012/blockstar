@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import { MAINNET, RINKEBY, GANACHE_UI } from "./utils/constants";
+import { MAINNET, GANACHE_UI, SEPOLIA } from "./utils/constants";
 import { getAppChainId } from "./utils/utils";
 
 const fetchWeb3 = () => {
@@ -43,7 +43,7 @@ const fetchWeb3 = () => {
 const getWeb3 = () => {
   /*const provider = new Web3.providers.HttpProvider(
     "http://127.0.0.1:7545"
-    //"https://rinkeby.infura.io/v3/d5a59a5f9b804981a1547791c8abb69a"
+    //"https://sepolia.infura.io/v3/d5a59a5f9b804981a1547791c8abb69a"
   );
   const web3 = new Web3(provider);
   console.log("No web3 instance injected, using Local web3.");
@@ -78,19 +78,19 @@ const getWeb3 = () => {
   }
   // Fallback to localhost; use dev console port by default...
   else {
-    let chainUrl = 'https://rinkeby.infura.io/v3/d5a59a5f9b804981a1547791c8abb69a';
+    let chainUrl = 'https://sepolia.infura.io/v3/d5a59a5f9b804981a1547791c8abb69a';
 
     if(appChainId == GANACHE_UI) {
       chainUrl = "http://127.0.0.1:7545";
     }
-    else if(appChainId == MAINNET) {
-      chainUrl = 'https://rinkeby.infura.io/v3/d5a59a5f9b804981a1547791c8abb69a';
+    else if(appChainId == SEPOLIA) {
+      chainUrl = 'https://sepolia.infura.io/v3/d5a59a5f9b804981a1547791c8abb69a';
     }
     const provider = new Web3.providers.HttpProvider(
       chainUrl
     );
     const web3 = new Web3(provider);
-    console.log("No web3 instance injected, using Local web3 with chainUrl", chainUrl, appChainId);
+    console.log("No web3 instance injected; using Local web3 with chainUrl", chainUrl, appChainId);
     return web3;
   }
 }

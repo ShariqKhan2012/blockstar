@@ -7,6 +7,7 @@ import { shortenAddress, getAppChainId, getChainConfig, getNetworkName } from '.
 
 const ConnnectWalletButton = () => {
     const web3Ctxt = useContext(Web3Context);
+    console.log(web3Ctxt)
     const { accounts, setAccounts, walletConnected, walletInstalled } = web3Ctxt;
     const [toastVisible, setToastVisible] = useState(false);
     const [notifType, setNotifType] = useState('warning');
@@ -41,7 +42,7 @@ const ConnnectWalletButton = () => {
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: getAppChainId() }],
                 });
-                console.log("Succefully switched to Rinkeby")
+                console.log("Succefully switched", getAppChainId())
             }
             catch (switchError) { //Connected successfully BUT failed switch to the appropriate network
                 // This error code indicates that the chain has not been added to MetaMask.
@@ -126,7 +127,7 @@ const ConnnectWalletButton = () => {
         <Dialog
           show={false}
           title="Notice"
-          msg="This Dapp lives on Rinkeby network. Please switch to Rinkey to be able to create a contest"
+          msg="This Dapp lives on Sepolia network. Please switch to Rinkey to be able to create a contest"
           onOk={switchNetwork}
           okLabel="Yes"
           onCancel={() => alert(456)}

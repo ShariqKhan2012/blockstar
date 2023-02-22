@@ -1,4 +1,4 @@
-import {MAINNET, RINKEBY, GANACHE_UI, GANACHE_UI_NETWORK, errorMessages} from './constants';
+import { MAINNET, GOERLI, SEPOLIA, GANACHE_UI, GANACHE_UI_NETWORK, errorMessages } from './constants';
 
 export const getChainConfig = (chainId) => {
     console.log('getChainConfig chainId ', chainId)
@@ -26,14 +26,14 @@ export const getChainConfig = (chainId) => {
             },
         }
     }
-    else { // (chainId == RINKEBY) {
+    else { // (chainId == SEPOLIA) {
         return {
-            chainId: RINKEBY,
-            chainName: 'Rinkeby Testnet',
-            rpcUrls: ['https://rinkeby.infura.io/v3/'],
+            chainId: SEPOLIA,
+            chainName: 'Sepolia test network',
+            rpcUrls: ['https://sepolia.infura.io/v3/'],
             nativeCurrency: {
                 //name: 'Binance Coin',
-                symbol: 'ETH', // 2-6 characters long
+                symbol: 'SepoliaETH', // 2-6 characters long
                 decimals: 18,
             },
         }
@@ -46,7 +46,7 @@ export const getRandomNumber = (min, max) => {
 export const getRandomThumbnail = (index) => {
     //return `/${index%7}.png`;
     const rootUrl = import.meta.env.BASE_URL;
-    return `${rootUrl}${index%7}.png`;
+    return `${rootUrl}${index % 7}.png`;
 }
 export const shortenAddress = (_addr) => {
     if (!_addr) {
@@ -62,20 +62,20 @@ export const getAppChainId = () => {
     const env = import.meta.env;
     console.log('env => ', env)
     //if dev && network == Ganache, then localhost
-    //else Rinkeby
+    //else Sepolia
     if (env.MODE == 'development') {
-        if (env.VITE_network && env.VITE_network == 'Rinkeby') {
-            return RINKEBY;
+        if (env.VITE_network && env.VITE_network == 'Sepolia') {
+            return String(SEPOLIA).toLowerCase();
         }
         else {
-            return GANACHE_UI;
+            return String(GANACHE_UI).toLowerCase();
         }
     }
-    else if (env.network && env.VITE_network == 'Mainnet') { //return Rinkeby
-        return MAINNET;
+    else if (env.network && env.VITE_network == 'Mainnet') { //return Mainnet
+        return String(MAINNET).toLowerCase();
     }
     else {
-        return RINKEBY;
+        return String(SEPOLIA).toLowerCase();
     }
 }
 
@@ -83,20 +83,20 @@ export const getAppNetworkId = () => {
     const env = import.meta.env;
     console.log('env => ', env)
     //if dev && network == Ganache, then localhost
-    //else Rinkeby
+    //else Sepolia
     if (env.MODE == 'development') {
-        if (env.VITE_network && env.VITE_network == 'Rinkeby') {
-            return RINKEBY;
+        if (env.VITE_network && env.VITE_network == 'Sepolia') {
+            return SEPOLIA;
         }
         else {
             return GANACHE_UI_NETWORK;
         }
     }
-    else if (env.network && env.VITE_network == 'Mainnet') { //return Rinkeby
+    else if (env.network && env.VITE_network == 'Mainnet') { //return Mainnet
         return MAINNET;
     }
     else {
-        return RINKEBY;
+        return SEPOLIA;
     }
 }
 
@@ -105,8 +105,8 @@ export const getNetworkName = (id) => {
         case MAINNET:
             return 'Mainnet';
 
-        case RINKEBY:
-            return 'Rinkeby';
+        case SEPOLIA:
+            return 'Sepolia';
 
         case GANACHE_UI:
             return 'Ganache UI';
@@ -132,12 +132,12 @@ export const extractErrorCode = (str) => {
 
     const delimiter = '___';
     const firstOccurence = str.indexOf(delimiter);
-    if(firstOccurence == -1) {
+    if (firstOccurence == -1) {
         return "An error occured";
     }
 
     const secondOccurence = str.indexOf(delimiter, firstOccurence + 1);
-    if(secondOccurence == -1) {
+    if (secondOccurence == -1) {
         return "An error occured";
     }
 

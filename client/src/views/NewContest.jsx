@@ -116,6 +116,7 @@ const NewContest = () => {
             </ContainedLayout>
         )
     }
+    console.log('web3Ctxt.walletChainId =>', web3Ctxt.walletChainId);
     console.log('web3Ctxt.currentChainId =>', web3Ctxt.currentChainId);
     console.log('getAppChainId =>', getAppChainId());
 

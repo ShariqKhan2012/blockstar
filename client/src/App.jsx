@@ -54,7 +54,8 @@ function App() {
         deployedNetwork && deployedNetwork.address,
       );
 
-      const _accounts = await _web3.eth.getAccounts();
+      //const _accounts = await _web3.eth.getAccounts();
+      const _accounts = await ethereum.request({ method: 'eth_accounts' });
       console.log('Accounts => ', _accounts);
 
       const _walletInstalled = Boolean(!!window.ethereum);
@@ -70,7 +71,7 @@ function App() {
       setWeb3(_web3);
 
       if (window.ethereum) {
-        setWalletChainId(window.ethereum.chainId);
+        setWalletChainId((String(window.ethereum.chainId)).toLowerCase());
 
         try {
           const permissions = await window.ethereum.request({ method: 'wallet_getPermissions' });
@@ -278,7 +279,7 @@ function App() {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: getAppChainId() }],
       });
-      console.log("You have succefully switched to Rinkeby")
+      console.log("You have succefully switched the ntwork")
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
       console.log("switchError", switchError);

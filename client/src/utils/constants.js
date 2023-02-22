@@ -1,6 +1,7 @@
 //Networks
 export const MAINNET = '0x1';   //Decimal => 1
-export const RINKEBY = '0x4';   //Decimal => 1
+export const GOERLI = '0x5';   //Decimal => 5
+export const SEPOLIA = '0xAA36A7';   //Decimal => 11155111
 export const GANACHE_UI = '0x539'; //Decimal => 1337
 export const GANACHE_UI_NETWORK = '0x1691'; //Decimal => 5777
 
